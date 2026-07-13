@@ -8,15 +8,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await fetch('components/header.html');
             const headerHtml = await response.text();
             placeholder.innerHTML = headerHtml;
+            
+            // 네비게이션과 스크롤바가 상단에 항상 고정되도록 placeholder 자체에 고정 스타일(fixed)을 부여합니다.
+            placeholder.classList.add('fixed', 'top-0', 'left-0', 'w-full', 'z-50');
+            
+            // 헤더가 안전하게 불러와진 후 아이콘을 다시 한 번 초기화합니다.
+            lucide.createIcons();
+            
+            // 헤더 로드 직후 스크롤바 상태를 한 번 동기화합니다.
+            setTimeout(updateScrollProgress, 100);
         } catch (error) {
             console.error('헤더를 불러오는데 실패했습니다.', error);
         }
     }
 
-    // 2. 아이콘 초기화 (헤더가 로드된 후 실행)
-    lucide.createIcons();
-
-    // 3. 다크모드 설정
+    // 2. 다크모드 설정
     const themeToggleBtn = document.getElementById('theme-toggle');
     const iconSun = document.getElementById('icon-sun');
     const iconMoon = document.getElementById('icon-moon');
@@ -43,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 4. 다국어 전환 설정
+    // 3. 다국어 전환 설정
     const langToggleBtn = document.getElementById('lang-toggle');
     const langText = document.getElementById('lang-text');
     let currentLang = localStorage.getItem('lang') || 'kr';
@@ -64,17 +70,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 5. 스크롤바 진행률
-    const scrollProgressBar = document.getElementById('scroll-progress');
-    window.addEventListener('scroll', () => {
-        if(!scrollProgressBar) return;
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-        scrollProgressBar.style.width = `${progress}%`;
-    }, { passive: true });
+    // 4. 스크롤바 진행률 (중복 코드를 하나로 통합 및 캡처링 적용)
+    function updateScrollProgress(e) {
+        const progressEl = document.getElementById('scroll-progress');
+        if (!progressEl) return; // 헤더가 아직 로드되지 않았다면 리턴
 
-    // 6. 현재 페이지 네비게이션 하이라이트
+        let scrollTop = 0;
+        let scrollHeight = 0;
+        let clientHeight = 0;
+
+        const target = e ? e.target : null;
+
+        // 화면 전체 스크롤인지, 내부 슬라이드(#pages 등) 스크롤인지 판별
+        if (!target || target === document || target === window || target === document.documentElement || target === document.body) {
+            scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+            scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+            clientHeight = window.innerHeight || document.documentElement.clientHeight;
+        } else {
+            scrollTop = target.scrollTop;
+            scrollHeight = target.scrollHeight;
+            clientHeight = target.clientHeight;
+        }
+
+        const usableHeight = scrollHeight - clientHeight;
+        const scrollPercent = usableHeight > 0 ? (scrollTop / usableHeight) * 100 : 0;
+        
+        progressEl.style.width = scrollPercent + '%';
+    }
+
+    // 세 번째 인자 true(Capturing)로 설정하여 내부 스크롤까지 낚아챕니다.
+    window.addEventListener('scroll', updateScrollProgress, true);
+    
+    // 초기 렌더링 직후에도 상태를 한 번 갱신합니다.
+    setTimeout(updateScrollProgress, 200);
+
+    // 5. 현재 페이지 네비게이션 하이라이트
     let currentPath = window.location.pathname.split('/').pop(); 
     if (!currentPath || currentPath === '/' || currentPath.includes('blob') || currentPath === 'iframe.html') {
         currentPath = 'index.html'; 
@@ -90,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ==========================================
-    // 🐾 7. 병아리 파티클 캔버스 & 마우스 트레일 애니메이션
+    // 🐾 6. 병아리 파티클 캔버스 & 마우스 트레일 애니메이션
     // ==========================================
     const canvas = document.getElementById('bg-canvas');
     if(!canvas) return; // 캔버스가 없으면 실행 안함
@@ -242,13 +272,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         requestAnimationFrame(animate);
     }
     animate();
-    window.addEventListener('scroll', () => {
-        const progressEl = document.getElementById('scroll-progress');
-        if (progressEl) {
-            const scrollTop = window.scrollY || document.documentElement.scrollTop;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-            progressEl.style.width = scrollPercent + '%';
-        }
-    });
 });
