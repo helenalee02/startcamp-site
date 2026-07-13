@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐣 삐약이 프론트엔드 개발자 - 프로필</title>
+    <title>🐣 삐약이 개발자 - 이가은 프로필</title>
     
+    <!-- Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -13,11 +14,32 @@
             theme: {
                 extend: {
                     colors: {
-                        border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
-                        background: "hsl(var(--background))", foreground: "hsl(var(--foreground))",
-                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))", },
-                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))", },
-                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))", }
+                        border: "hsl(var(--border))", 
+                        input: "hsl(var(--input))", 
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))", 
+                        foreground: "hsl(var(--foreground))",
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))",
+                        },
+                        primary: { 
+                            DEFAULT: "hsl(var(--primary))", 
+                            foreground: "hsl(var(--primary-foreground))", 
+                        },
+                        muted: { 
+                            DEFAULT: "hsl(var(--muted))", 
+                            foreground: "hsl(var(--muted-foreground))", 
+                        },
+                        accent: { 
+                            DEFAULT: "hsl(var(--accent))", 
+                            foreground: "hsl(var(--accent-foreground))", 
+                        }
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
                     }
                 }
             }
@@ -26,118 +48,458 @@
     <style type="text/tailwindcss">
         @layer base {
             :root {
-                --background: 48 100% 97%; --foreground: 24 50% 20%; --primary: 45 93% 55%; --primary-foreground: 24 50% 20%; 
-                --muted: 45 40% 90%; --muted-foreground: 24 20% 50%; --accent: 30 100% 85%; --accent-foreground: 24 50% 20%;
-                --border: 45 30% 85%; --input: 45 30% 85%; --ring: 45 93% 55%; --radius: 1rem;
+                --background: 48 100% 97%; 
+                --foreground: 24 50% 20%; 
+                --card: 0 0% 100%;
+                --card-foreground: 24 50% 20%;
+                --primary: 45 93% 55%; 
+                --primary-foreground: 24 50% 20%; 
+                --muted: 45 40% 93%; 
+                --muted-foreground: 24 20% 45%; 
+                --accent: 30 100% 90%; 
+                --accent-foreground: 24 50% 20%;
+                --border: 45 40% 85%; 
+                --input: 45 40% 85%; 
+                --ring: 45 93% 55%; 
+                --radius: 1.25rem;
             }
             .dark {
-                --background: 24 20% 12%; --foreground: 48 100% 90%; --primary: 45 93% 50%; --primary-foreground: 24 20% 12%;
-                --muted: 24 20% 20%; --muted-foreground: 48 40% 70%; --accent: 24 30% 25%; --accent-foreground: 48 100% 90%;
-                --border: 24 20% 25%; --input: 24 20% 25%; --ring: 45 93% 50%;
+                --background: 24 20% 10%; 
+                --foreground: 48 100% 92%; 
+                --card: 24 20% 14%;
+                --card-foreground: 48 100% 92%;
+                --primary: 45 93% 50%; 
+                --primary-foreground: 24 20% 10%;
+                --muted: 24 15% 18%; 
+                --muted-foreground: 48 40% 75%; 
+                --accent: 24 30% 22%; 
+                --accent-foreground: 48 100% 90%;
+                --border: 24 20% 20%; 
+                --input: 24 20% 20%; 
+                --ring: 45 93% 50%;
             }
             * { @apply border-border; }
             body { 
-                @apply bg-background text-foreground antialiased; 
+                @apply bg-background text-foreground antialiased transition-colors duration-300; 
             }
         }
-        .nav-link.active { @apply text-primary font-bold relative; }
-        .nav-link.active::after { content: ''; @apply absolute -bottom-[21px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-primary rounded-t-md; }
     </style>
 
     <style>
+        /* 커스텀 마우스 커서 적용 */
         body { 
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐥</text></svg>'), auto !important;
         }
         a, button, [role="button"], input, select, textarea, .nav-link, .cursor-pointer {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐣</text></svg>'), pointer !important;
         }
+
+        /* 삐약이 숨쉬는 & 움직이는 애니메이션들 */
+        @keyframes chick-float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-4px) scale(1.02); }
+        }
+        @keyframes eye-blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        @keyframes sprout-wobble {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(12deg); }
+        }
+        @keyframes wing-flap-left {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-25deg) translateY(-2px); }
+        }
+        @keyframes wing-flap-right {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(25deg) translateY(-2px); }
+        }
+
+        .chick-animated {
+            animation: chick-float 4s ease-in-out infinite;
+        }
+        .eye-blink-class {
+            transform-origin: 50% 45%;
+            animation: eye-blink 4s infinite;
+        }
+        .sprout-target {
+            transform-origin: 50% 23px;
+        }
+        .chick-container:hover .sprout-target {
+            animation: sprout-wobble 1s ease-in-out infinite;
+        }
+        .wing-l {
+            transform-origin: 32px 64px;
+        }
+        .wing-r {
+            transform-origin: 68px 64px;
+        }
+        .chick-container:active .wing-l {
+            animation: wing-flap-left 0.2s ease-in-out infinite;
+        }
+        .chick-container:active .wing-r {
+            animation: wing-flap-right 0.2s ease-in-out infinite;
+        }
+        
+        /* 젤리 바운스 카드 트랜지션 */
+        .jelly-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
     </style>
 </head>
-<body class="min-h-screen relative overflow-x-hidden">
+<body class="min-h-screen relative overflow-x-hidden pb-24">
 
+    <!-- 감성 배경 애니메이션 캔버스 -->
     <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-60"></canvas>
 
+    <!-- 외부 네비게이터 삽입용 플레이스홀더 (동일 유지) -->
     <div id="header-placeholder"></div>
 
-    <!-- 메인 프로필 섹션 -->
-    <main class="container mx-auto px-4 py-24 max-w-screen-md relative z-10">
-        <!-- 상단 헤더 타이틀 -->
-        <div class="mb-12">
-            <p class="text-primary font-black text-sm tracking-widest mb-2 flex items-center gap-2">
-                <span class="bg-primary/20 px-2 py-0.5 rounded-md text-xs font-bold">02</span> PROFILE
-            </p>
-            <h1 class="text-4xl font-black tracking-tight" data-kr="저는 이런 사람이에요" data-en="About Me">
-                저는 이런 사람이에요
-            </h1>
-        </div>
+    <!-- 메인 프로필 콘텐츠 -->
+    <main class="container mx-auto px-4 pt-28 max-w-screen-md relative z-10 space-y-8">
         
-        <!-- 프로필 정보 그리드 (2열 구조, 목표 카드는 하단 전체 너비) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- 상단: 삐약이 말풍선 & 귀여운 아바타 통합형 히어로 카드 -->
+        <section class="flex flex-col items-center p-8 rounded-3xl border-2 border-primary/25 bg-card/80 backdrop-blur-md shadow-xl relative overflow-hidden">
             
-            <!-- Name Card -->
-            <div class="p-6 rounded-2xl border-2 border-primary/20 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300 flex items-center space-x-4">
-                <div class="p-3 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40">
-                    <i data-lucide="user" class="h-6 w-6"></i>
+            <!-- 아기자기한 말풍선 시스템 -->
+            <div class="relative w-full max-w-md mb-6 transition-all duration-300">
+                <div class="bg-primary/10 dark:bg-amber-950/40 border-2 border-primary/30 rounded-2xl p-4 text-center relative shadow-sm">
+                    <!-- 말풍선 꼬리 -->
+                    <div class="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-4 h-4 bg-background dark:bg-card border-r-2 border-b-2 border-primary/30 transform rotate-45" style="background-color: inherit;"></div>
+                    <!-- 유동적인 말풍선 텍스트 -->
+                    <p id="speech-bubble" class="text-sm md:text-base font-black text-amber-900 dark:text-amber-200 animate-pulse transition-opacity duration-200" 
+                       data-kr="안녕! 나를 클릭하거나 아래 카드를 하나씩 눌러봐 삐약! 🐣" 
+                       data-en="Hi! Click me or press the cards below! 🐣">
+                        안녕! 나를 클릭하거나 아래 카드를 하나씩 눌러봐 삐약! 🐣
+                    </p>
+                </div>
+            </div>
+
+            <!-- 귀여운 인터랙티브 SVG 삐약이 캐릭터 -->
+            <div class="chick-container relative w-36 h-36 md:w-40 md:h-40 flex items-center justify-center bg-gradient-to-br from-yellow-100 to-amber-200 dark:from-yellow-950/40 dark:to-amber-900/40 rounded-full border-4 border-primary p-2 shadow-inner cursor-pointer transform hover:scale-110 active:scale-95 transition-all duration-300">
+                <svg viewBox="0 0 100 100" class="chick-animated w-full h-full">
+                    <!-- 머리카락(새싹) - 마우스오버시 살랑살랑 흔들림 -->
+                    <g class="sprout-target">
+                        <path d="M50,23 C50,15 42,15 42,15 C42,15 48,19 50,23 Z" fill="#4ADE80" />
+                        <path d="M50,23 C50,14 58,14 58,14 C58,14 52,18 50,23 Z" fill="#4ADE80" />
+                    </g>
+                    <!-- 몸통 -->
+                    <circle cx="50" cy="55" r="30" fill="#FCD34D" />
+                    
+                    <!-- 날개 (좌/우) - 클릭(active)시 파닥파닥 -->
+                    <path d="M22,55 C14,55 14,64 22,64 Z" fill="#FBBF24" class="wing-l" />
+                    <path d="M78,55 C86,55 86,64 78,64 Z" fill="#FBBF24" class="wing-r" />
+                    <!-- 얼굴 흰자/눈빛 (깜빡임 적용) -->
+                    <g class="eye-blink-class">
+                        <circle cx="39" cy="50" r="4.5" fill="#1F2937" />
+                        <circle cx="61" cy="50" r="4.5" fill="#1F2937" />
+                        <circle cx="37.5" cy="48" r="1.5" fill="#FFFFFF" />
+                        <circle cx="59.5" cy="48" r="1.5" fill="#FFFFFF" />
+                    </g>
+                    <!-- 귀여운 오렌지 부리 -->
+                    <polygon points="45,55 55,55 50,63" fill="#F97316" stroke="#F97316" stroke-width="1" stroke-linejoin="round" />
+                    <!-- 발그레 볼터치 -->
+                    <circle cx="29" cy="56" r="3.5" fill="#F87171" opacity="0.65" />
+                    <circle cx="71" cy="56" r="3.5" fill="#F87171" opacity="0.65" />
+                   
+                </svg>
+                <!-- 성장 중 꼬마 배지 -->
+                <span class="absolute -bottom-1 bg-green-500 text-white text-[10px] px-2.5 py-0.5 rounded-full border-2 border-white font-black shadow-md tracking-wider animate-bounce" data-kr="성장 중" data-en="Growing">성장 중</span>
+            </div>
+
+            <!-- 가볍고 경쾌한 영웅 타이틀 -->
+            <div class="text-center mt-5 space-y-1">
+                <p class="text-primary font-black text-xs tracking-widest uppercase flex items-center justify-center gap-1.5">
+                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+                    <span data-kr="예비 데이터 사이언티스트" data-en="Aspiring Data Scientist">예비 데이터 사이언티스트</span>
+                </p>
+                <h1 class="text-3xl font-black tracking-tight mt-1" data-kr="저는 이런 사람이에요" data-en="About Me">저는 이런 사람이에요</h1>
+            </div>
+        </section>
+
+        <!-- 중단: 기본 프로필 그리드 섹션 (클릭 인터랙티브 연동) -->
+        <section class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- 1. Name Card -->
+                <div onclick="triggerSpeech('name')" 
+                     class="jelly-card group p-5 rounded-2xl border-2 border-primary/20 bg-card/60 shadow-sm backdrop-blur-sm hover:scale-[1.03] hover:border-primary hover:shadow-lg active:scale-95 cursor-pointer flex items-center space-x-4">
+                    <div class="p-3 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                        <i data-lucide="user" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</div>
+                        <div class="text-lg font-bold mt-0.5 text-foreground" data-kr="이가은" data-en="Gaeun Lee">이가은</div>
+                    </div>
+                </div>
+
+                <!-- 2. Age Card -->
+                <div onclick="triggerSpeech('age')" 
+                     class="jelly-card group p-5 rounded-2xl border-2 border-primary/20 bg-card/60 shadow-sm backdrop-blur-sm hover:scale-[1.03] hover:border-primary hover:shadow-lg active:scale-95 cursor-pointer flex items-center space-x-4">
+                    <div class="p-3 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                        <i data-lucide="calendar" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Age</div>
+                        <div class="text-lg font-bold mt-0.5 text-foreground" data-kr="25세 (2002년생)" data-en="25 (Born in '02)">25세 (2002년생)</div>
+                    </div>
+                </div>
+
+                <!-- 3. Major Card -->
+                <div onclick="triggerSpeech('major')" 
+                     class="jelly-card group p-5 rounded-2xl border-2 border-primary/20 bg-card/60 shadow-sm backdrop-blur-sm hover:scale-[1.03] hover:border-primary hover:shadow-lg active:scale-95 cursor-pointer flex items-center space-x-4">
+                    <div class="p-3 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                        <i data-lucide="graduation-cap" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Major</div>
+                        <div class="text-lg font-bold mt-0.5 text-foreground" data-kr="데이터사이언스학과" data-en="Data Science">데이터사이언스학과</div>
+                    </div>
+                </div>
+
+                <!-- 4. MBTI Card -->
+                <div onclick="triggerSpeech('mbti')" 
+                     class="jelly-card group p-5 rounded-2xl border-2 border-primary/20 bg-card/60 shadow-sm backdrop-blur-sm hover:scale-[1.03] hover:border-primary hover:shadow-lg active:scale-95 cursor-pointer flex items-center space-x-4">
+                    <div class="p-3 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                        <i data-lucide="sparkles" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">MBTI</div>
+                        <div class="text-lg font-bold mt-0.5 text-foreground" data-kr="ENTP (뜨거운 논쟁을 즐기는 변론가)" data-en="ENTP (Debater)">ENTP (뜨거운 논쟁을 즐기는 변론가)</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 5. Goal Card (하단에 넓게 배치하여 균형감 부여) -->
+            <div onclick="triggerSpeech('goal')" 
+                 class="jelly-card group p-5 rounded-2xl border-2 border-primary/25 bg-primary/10 shadow-md backdrop-blur-sm hover:scale-[1.02] hover:border-primary hover:shadow-lg active:scale-[0.99] cursor-pointer flex items-center space-x-4">
+                <div class="p-3 rounded-xl bg-primary text-primary-foreground shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <i data-lucide="cpu" class="h-6 w-6 animate-spin" style="animation-duration: 4s;"></i>
                 </div>
                 <div>
-                    <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</div>
-                    <div class="text-xl font-bold mt-0.5" data-kr="이가은" data-en="Gaeun Lee">이가은</div>
+                    <div class="text-xs font-semibold text-orange-600/80 dark:text-orange-400 uppercase tracking-wider">Goal</div>
+                    <div class="text-lg font-black mt-0.5 text-foreground" data-kr="AI 기술을 친근하고 유용하게 세상에 전하는 융합형 개발자" data-en="An adaptive developer bridging human needs with creative AI technologies">
+                        AI 기술을 친근하고 유용하게 세상에 전하는 융합형 개발자
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Age Card -->
-            <div class="p-6 rounded-2xl border-2 border-primary/20 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300 flex items-center space-x-4">
-                <div class="p-3 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40">
-                    <i data-lucide="calendar" class="h-6 w-6"></i>
-                </div>
-                <div>
-                    <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Age</div>
-                    <div class="text-xl font-bold mt-0.5" data-kr="25세 (02년생)" data-en="25 (Born in '02)">25세 (02년생)</div>
-                </div>
-            </div>
-
-            <!-- Major Card -->
-            <div class="p-6 rounded-2xl border-2 border-primary/20 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300 flex items-center space-x-4">
-                <div class="p-3 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40">
-                    <i data-lucide="graduation-cap" class="h-6 w-6"></i>
-                </div>
-                <div>
-                    <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Major</div>
-                    <div class="text-xl font-bold mt-0.5" data-kr="데이터사이언스학과" data-en="Data Science">데이터사이언스학과</div>
-                </div>
-            </div>
-
-            <!-- MBTI Card -->
-            <div class="p-6 rounded-2xl border-2 border-primary/20 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300 flex items-center space-x-4">
-                <div class="p-3 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40">
-                    <i data-lucide="sparkles" class="h-6 w-6"></i>
-                </div>
-                <div>
-                    <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">MBTI</div>
-                    <div class="text-xl font-bold mt-0.5" data-kr="ENTP" data-en="ENTP">ENTP</div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Goal Card (하단에 길게 배치하여 균형감 부여) -->
-        <div class="p-6 rounded-2xl border-2 border-primary/25 bg-primary/5 text-card-foreground shadow-md backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300 flex items-center space-x-4">
-            <div class="p-3 rounded-xl bg-primary text-primary-foreground shadow-sm animate-pulse">
-                <i data-lucide="cpu" class="h-6 w-6"></i>
-            </div>
-            <div>
-                <div class="text-xs font-semibold text-orange-600/80 dark:text-orange-400 uppercase tracking-wider">Goal</div>
-                <div class="text-xl font-black mt-0.5 text-foreground" data-kr="AI를 잘 활용하는 개발자" data-en="A developer who brings AI to life">
-                    AI를 잘 활용하는 개발자
-                </div>
-            </div>
-        </div>
     </main>
 
+    <!-- 외부 스크립트 (원래 코드 구조와 동일하게 로드) -->
     <script src="js/common.js"></script>
+    
     <script>
-        // Lucide 아이콘 초기화 스크립트 추가
+        // Lucide 아이콘 활성화
         lucide.createIcons();
+
+        // 다국어 상태값 (기본 한국어)
+        let currentLang = 'ko';
+
+        // 삐약이 말뭉치 데이터베이스 (다이내믹 코멘트 대응)
+        const speechDatabase = {
+            'default': {
+                'ko': '안녕! 나를 클릭하거나 아래 카드를 하나씩 눌러봐 삐약! 🐣',
+                'en': 'Hi! Click me or press the cards below! 🐣'
+            },
+            'name': {
+                'ko': '안녕하세요. 데이터 분석과 가치 창출에 집중하는 개발자 이가은입니다. 💼',
+                'en': 'Hello. I am Gaeun Lee, a developer focused on data analysis and value creation. 💼'
+            },
+            'age': {
+                'ko': '2002년생으로, 적극적인 배움과 도전을 통해 실질적인 역량을 꾸준히 확장하려고 노력하고 있습니다. 📈',
+                'en': 'Born in 2002, actively trying to expand my capabilities through ongoing learning and technical challenges. 📈'
+            },
+            'major': {
+                'ko': '데이터사이언스를 전공하며, 대학과정을 통해 다양한 형태의 데이터 속에서 유의미한 인사이트를 정제하고 설계하는 역량을 길러 왔습니다. 📊',
+                'en': 'Majoring in Data Science, I learned how to refine and structure meaningful insights from multi-dimensional datasets. 📊'
+            },
+            'mbti': {
+                'ko': '논리적인 분석을 중시하며, 유연한 사고방식으로 당면한 기술 과제에 대한 주도적 해결책을 기획하려고 노력합니다. 💡',
+                'en': 'I value logical analysis and try to approach technical hurdles with an open, solution-oriented mindset. 💡'
+            },
+            'goal': {
+                'ko': '기능적 인공지능 모델 구현을 넘어, 사용자 중심의 실용적이고 완성도 높은 융합 서비스를 구축하는 개발자를 지향합니다. 🤖',
+                'en': 'My target is to design and develop highly practical, user-centric integrated solutions leveraging AI. 🤖'
+            },
+            'chick': {
+                'ko': '삐약! 나를 쓰다듬어 주다니 정말 고마워! 기분 최고야! 🐥',
+                'en': 'Chirp! Thank you for tapping me! I feel so cheerful! 🐥'
+            }
+        };
+
+        // 삐약이 말풍선 애니메이션 트리거
+        const speechBubble = document.getElementById('speech-bubble');
+        let currentSpeechKey = 'default';
+
+        function triggerSpeech(key) {
+            currentSpeechKey = key;
+            speechBubble.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                const text = speechDatabase[key][currentLang];
+                speechBubble.textContent = text;
+                speechBubble.classList.remove('opacity-0');
+            }, 150);
+        }
+
+        // 삐약이 캐릭터 자체 클릭 이벤트
+        const chickContainer = document.querySelector('.chick-container');
+        chickContainer.addEventListener('click', () => {
+            triggerSpeech('chick');
+            // 흔들림 후 다시 기본 상태로 돌아올 타이머 설정
+            setTimeout(() => {
+                if (currentSpeechKey === 'chick') triggerSpeech('default');
+            }, 2500);
+        });
+
+        // 다국어 적용 핸들러 (원래 네비게이터 언어 변경 기능과의 싱크 대응)
+        // 외부 스크립트 'js/common.js' 또는 공통 기능에서 'currentLang'을 변경 시 감지되도록 함수 제공
+        function setProfileLanguage(lang) {
+            currentLang = lang;
+            // 텍스트 변환 타겟들 처리
+            document.querySelectorAll('[data-kr]').forEach(el => {
+                const text = lang === 'ko' ? el.getAttribute('data-kr') : el.getAttribute('data-en');
+                if (text) el.textContent = text;
+            });
+            // 말풍선도 언어에 맞게 갱신
+            triggerSpeech(currentSpeechKey);
+        }
+
+        // 전역 다국어 바인딩 시도 (외부 common.js 에서 동작 가능하도록 노출)
+        window.changeLanguageProfile = setProfileLanguage;
+
+        // 예시용 리스너: 언어 단축키 클릭 시 (디버깅 편의용)
+        document.addEventListener('languageChanged', (e) => {
+            if (e.detail && e.detail.lang) {
+                setProfileLanguage(e.detail.lang);
+            }
+        });
+
+
+        // ==========================================
+        // 인터랙티브 배경 파티클 시스템 (배경 캔버스 애니메이션)
+        // ==========================================
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const maxParticles = 25;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 12 + 6;
+                this.speedY = -(Math.random() * 0.5 + 0.3);
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random() * 0.4 + 0.2;
+                this.type = Math.floor(Math.random() * 3); // 0: Feather, 1: Sparkle, 2: Heart
+                this.angle = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 0.4 - 0.2;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle * Math.PI / 180);
+
+                // 색상 결정 (옐로우 계열 마카롱 컬러)
+                ctx.fillStyle = document.documentElement.classList.contains('dark') ? 'rgba(251, 191, 36, 0.3)' : 'rgba(245, 158, 11, 0.2)';
+
+                if (this.type === 0) {
+                    // 귀여운 깃털 모양 그리기
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.quadraticCurveTo(-this.size, -this.size / 2, 0, -this.size);
+                    ctx.quadraticCurveTo(this.size, -this.size / 2, 0, 0);
+                    ctx.fill();
+                } else if (this.type === 1) {
+                    // 반짝이 스파클 모양 그리기
+                    ctx.beginPath();
+                    for (let i = 0; i < 4; i++) {
+                        ctx.lineTo(0, -this.size);
+                        ctx.lineTo(this.size / 3, -this.size / 3);
+                        ctx.rotate(Math.PI / 2);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                } else {
+                    // 아기자기한 동그란 알 조각 모양
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.angle += this.rotationSpeed;
+
+                // 화면 위로 완전히 사라지면 아래에서 리셋
+                if (this.y < -50 || this.x < -50 || this.x > canvas.width + 50) {
+                    this.reset();
+                }
+            }
+        }
+
+        // 초기 생성
+        for (let i = 0; i < maxParticles; i++) {
+            particles.push(new Particle());
+            particles[i].y = Math.random() * canvas.height; // 골고루 흩어지게 초기 배치
+        }
+
+        // 마우스 호버 효과를 위한 추적기
+        let mouseX = 0;
+        let mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // 애니메이션 루프
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update();
+                
+                // 마우스 주변에 미세한 척력 효과
+                let dx = p.x - mouseX;
+                let dy = p.y - mouseY;
+                let dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 100) {
+                    p.x += dx / dist * 1.2;
+                    p.y += dy / dist * 1.2;
+                }
+
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        // 페이지 온로드 시 루프 가동
+        window.onload = function() {
+            animate();
+        };
     </script>
 </body>
 </html>
