@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐣 삐약이 프론트엔드 개발자 - 미래 목표</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))", foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))", },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))", },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))", }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --background: 48 100% 97%; --foreground: 24 50% 20%; --primary: 45 93% 55%; --primary-foreground: 24 50% 20%; 
+                --muted: 45 40% 90%; --muted-foreground: 24 20% 50%; --accent: 30 100% 85%; --accent-foreground: 24 50% 20%;
+                --border: 45 30% 85%; --input: 45 30% 85%; --ring: 45 93% 55%; --radius: 1rem;
+            }
+            .dark {
+                --background: 24 20% 12%; --foreground: 48 100% 90%; --primary: 45 93% 50%; --primary-foreground: 24 20% 12%;
+                --muted: 24 20% 20%; --muted-foreground: 48 40% 70%; --accent: 24 30% 25%; --accent-foreground: 48 100% 90%;
+                --border: 24 20% 25%; --input: 24 20% 25%; --ring: 45 93% 50%;
+            }
+            * { @apply border-border; }
+            body { 
+                @apply bg-background text-foreground antialiased; 
+            }
+        }
+        .nav-link.active { @apply text-primary font-bold relative; }
+        .nav-link.active::after { content: ''; @apply absolute -bottom-[21px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-primary rounded-t-md; }
+    </style>
+
+    <style>
+        body { 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐥</text></svg>'), auto !important;
+        }
+        a, button, [role="button"], input, select, textarea, .nav-link, .cursor-pointer {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐣</text></svg>'), pointer !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden pb-16">
+
+    <!-- 병아리 파티클 배경 캔버스 (js/common.js 연동) -->
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-60"></canvas>
+
+    <!-- 공통 헤더가 주입되는 공간 (fixed 상단바가 적용되어 있습니다) -->
+    <div id="header-placeholder"></div>
+
+    <!-- 메인 목표 섹션 -->
+    <main class="container mx-auto px-4 py-28 max-w-screen-md relative z-10">
+        
+        <!-- 상단 헤더 타이틀 -->
+        <div class="mb-12 text-center md:text-left">
+            <p class="text-primary font-black text-sm tracking-widest mb-2 flex items-center justify-center md:justify-start gap-2">
+                <span class="bg-primary/20 px-2 py-0.5 rounded-md text-xs font-bold">05</span> FUTURE GOALS
+            </p>
+            <h1 class="text-4xl font-black tracking-tight mb-3" data-kr="가은이의 무한한 성장 로드맵" data-en="My Infinite Growth Roadmap">
+                가은이의 무한한 성장 로드맵
+            </h1>
+            <p class="text-muted-foreground text-sm md:text-base" data-kr="단단한 껍질을 깨고 나와 그리는 든든한 약속이자 목표판입니다." data-en="The sturdy promises and milestones of breaking out of the egg shell.">
+                단단한 껍질을 깨고 나와 그리는 든든한 약속이자 목표판입니다.
+            </p>
+        </div>
+
+        <!-- 퀘스트 선언문 메인 보드 -->
+        <div class="mb-12 p-8 rounded-[2.5rem] border-2 border-primary/20 bg-gradient-to-br from-primary/10 via-card/50 to-orange-500/10 text-card-foreground shadow-xl backdrop-blur-sm relative overflow-hidden text-center md:text-left">
+            <div class="absolute -top-12 -left-12 w-44 h-44 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -right-12 w-44 h-44 bg-orange-400/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <span class="inline-block px-3 py-1 text-xs font-extrabold bg-primary text-primary-foreground rounded-full mb-4 shadow-sm uppercase tracking-widest animate-pulse">Quest Statement</span>
+            <p class="text-xl md:text-2xl font-bold leading-relaxed text-foreground" 
+               data-kr="SSAFY에서 <span class='text-orange-500 dark:text-orange-400'>탄탄한 개발 기본기</span>를 쌓고,<br>제 전공인 <span class='text-primary dark:text-yellow-400 font-black'>AI를 살리는 개발자</span>가 되고 싶습니다." 
+               data-en="I will build <span class='text-orange-500 dark:text-orange-400'>solid development fundamentals</span> in SSAFY,<br>and become a developer who <span class='text-primary dark:text-yellow-400 font-black'>brings AI to life</span>, utilizing my major.">
+                SSAFY에서 <span class="text-orange-500 dark:text-orange-400">탄탄한 개발 기본기</span>를 쌓고,<br>제 전공인 <span class="text-primary dark:text-yellow-400 font-black">AI를 살리는 개발자</span>가 되고 싶습니다.
+            </p>
+        </div>
+
+        <!-- 퀘스트 카드 리스트 -->
+        <div class="space-y-6">
+            
+            <!-- 퀘스트 카드 1: 개발 기본기 쌓기 (15%) -->
+            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/10 bg-card/80 shadow-md backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/30 duration-300">
+                <div class="flex items-start space-x-4">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 shrink-0 flex items-center justify-center font-black text-2xl shadow-sm">
+                        Q1
+                    </div>
+                    <div class="w-full">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+                            <h3 class="text-lg md:text-xl font-bold flex items-center gap-2" data-kr="개발 기본기 쌓기" data-en="Building Dev Fundamentals">
+                                개발 기본기 쌓기
+                            </h3>
+                            <span class="pct text-xl font-black text-orange-500 tracking-wider shrink-0" data-target="15">0%</span>
+                        </div>
+                        
+                        <!-- 프로그레스 게이지 바 -->
+                        <div class="w-full bg-muted rounded-full h-4 overflow-hidden mb-4 relative border border-primary/5">
+                            <div class="progress-fill bg-gradient-to-r from-primary to-orange-400 h-full rounded-full transition-all duration-[1500ms] ease-out" style="width: 0%;" data-value="15%"></div>
+                        </div>
+
+                        <p class="text-muted-foreground text-sm md:text-base leading-relaxed" 
+                           data-kr="이제 막 시작! 알고리즘도, 개발 기초체력도 여기서부터 탄탄하게 쌓아 올릴 예정입니다." 
+                           data-en="Just starting! Planning to build both algorithms and basic development strength solidly from here.">
+                            이제 막 시작! 알고리즘도, 개발 기초체력도 여기서부터 탄탄하게 쌓아 올릴 예정입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 퀘스트 카드 2: AI 살리는 개발자 되기 (35%) -->
+            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/10 bg-card/80 shadow-md backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/30 duration-300">
+                <div class="flex items-start space-x-4">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 shrink-0 flex items-center justify-center font-black text-2xl shadow-sm">
+                        Q2
+                    </div>
+                    <div class="w-full">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+                            <h3 class="text-lg md:text-xl font-bold flex items-center gap-2" data-kr="AI 살리는 개발자 되기" data-en="Becoming an AI-Infused Developer">
+                                AI 살리는 개발자 되기
+                            </h3>
+                            <span class="pct text-xl font-black text-orange-500 tracking-wider shrink-0" data-target="35">0%</span>
+                        </div>
+                        
+                        <!-- 프로그레스 게이지 바 -->
+                        <div class="w-full bg-muted rounded-full h-4 overflow-hidden mb-4 relative border border-primary/5">
+                            <div class="progress-fill bg-gradient-to-r from-primary to-orange-400 h-full rounded-full transition-all duration-[1500ms] ease-out" style="width: 0%;" data-value="35%"></div>
+                        </div>
+
+                        <p class="text-muted-foreground text-sm md:text-base leading-relaxed" 
+                           data-kr="AI 탐구열은 이미 충분! 탄탄한 개발 기본기를 더해서 진짜 실력으로 AI를 다루는 개발자가 되겠습니다." 
+                           data-en="My AI passion is already high! Adding solid dev fundamentals to become a developer who handles AI with real skills.">
+                            AI 탐구열은 이미 충분! 탄탄한 개발 기본기를 더해서 진짜 실력으로 AI를 다루는 개발자가 되겠습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/common.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lucide 아이콘 활성화
+            lucide.createIcons();
+
+            // 목표 달성률 게이지 바 채우기 & 카운트업 애니메이션
+            setTimeout(() => {
+                // 1. 프로그레스 바 차오르기 효과
+                const progressFills = document.querySelectorAll('.progress-fill');
+                progressFills.forEach(fill => {
+                    const targetPercent = fill.getAttribute('data-value');
+                    fill.style.width = targetPercent;
+                });
+
+                // 2. 숫자 0%에서 목표치까지 스르륵 카운트업
+                const pctElements = document.querySelectorAll('.pct');
+                pctElements.forEach(el => {
+                    const targetNum = parseInt(el.getAttribute('data-target'), 10);
+                    let currentNum = 0;
+                    
+                    // 수치에 따라 속도를 미세하게 조절하는 스마트 타이머
+                    const duration = 1200; // 카운트업이 완료될 전체 시간 (밀리초)
+                    const stepTime = Math.max(Math.floor(duration / targetNum), 15);
+                    
+                    const counter = setInterval(() => {
+                        currentNum++;
+                        if (currentNum >= targetNum) {
+                            el.innerText = targetNum + '%';
+                            clearInterval(counter);
+                        } else {
+                            el.innerText = currentNum + '%';
+                        }
+                    }, stepTime);
+                });
+            }, 300); // 헤더 바인딩 안정화를 위한 마이크로 딜레이
+        });
+    </script>
+</body>
+</html>
