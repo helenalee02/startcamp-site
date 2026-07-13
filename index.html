@@ -3,70 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>포트폴리오 - 메인</title>
+    <title>🐣 삐약이 프론트엔드 개발자 - 메인</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        border: "hsl(var(--border))",
-                        input: "hsl(var(--input))",
-                        ring: "hsl(var(--ring))",
-                        background: "hsl(var(--background))",
-                        foreground: "hsl(var(--foreground))",
-                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
-                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
-                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+                        border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))", foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))", },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))", },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))", }
                     }
                 }
             }
         }
     </script>
+    
     <style type="text/tailwindcss">
         @layer base {
             :root {
-                --background: 0 0% 100%; --foreground: 240 10% 3.9%;
-                --primary: 240 5.9% 10%; --primary-foreground: 0 0% 98%;
-                --muted: 240 4.8% 95.9%; --muted-foreground: 240 3.8% 46.1%;
-                --accent: 240 4.8% 95.9%; --accent-foreground: 240 5.9% 10%;
-                --border: 240 5.9% 90%; --input: 240 5.9% 90%;
-                --ring: 240 10% 3.9%; --radius: 0.5rem;
+                --background: 48 100% 97%; --foreground: 24 50% 20%; --primary: 45 93% 55%; --primary-foreground: 24 50% 20%; 
+                --muted: 45 40% 90%; --muted-foreground: 24 20% 50%; --accent: 30 100% 85%; --accent-foreground: 24 50% 20%;
+                --border: 45 30% 85%; --input: 45 30% 85%; --ring: 45 93% 55%; --radius: 1rem;
             }
             .dark {
-                --background: 240 10% 3.9%; --foreground: 0 0% 98%;
-                --primary: 0 0% 98%; --primary-foreground: 240 5.9% 10%;
-                --muted: 240 3.7% 15.9%; --muted-foreground: 240 5% 64.9%;
-                --accent: 240 3.7% 15.9%; --accent-foreground: 0 0% 98%;
-                --border: 240 3.7% 15.9%; --input: 240 3.7% 15.9%;
-                --ring: 240 4.9% 83.9%;
+                --background: 24 20% 12%; --foreground: 48 100% 90%; --primary: 45 93% 50%; --primary-foreground: 24 20% 12%;
+                --muted: 24 20% 20%; --muted-foreground: 48 40% 70%; --accent: 24 30% 25%; --accent-foreground: 48 100% 90%;
+                --border: 24 20% 25%; --input: 24 20% 25%; --ring: 45 93% 50%;
             }
             * { @apply border-border; }
-            body { @apply bg-background text-foreground antialiased; }
+            body { 
+                @apply bg-background text-foreground antialiased; 
+            }
         }
-        .nav-link.active { @apply text-foreground font-semibold relative; }
-        .nav-link.active::after {
-            content: '';
-            @apply absolute -bottom-[21px] left-0 w-full h-[2px] bg-foreground;
+        .nav-link.active { @apply text-primary font-bold relative; }
+        .nav-link.active::after { content: ''; @apply absolute -bottom-[21px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-primary rounded-t-md; }
+    </style>
+
+    <style>
+        body { 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐥</text></svg>'), auto !important;
+        }
+        a, button, [role="button"], input, select, textarea, .nav-link, .cursor-pointer {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐣</text></svg>'), pointer !important;
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen relative overflow-x-hidden">
+
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-60"></canvas>
 
     <div id="header-placeholder"></div>
 
-    <main class="container mx-auto px-4 py-20 max-w-screen-md">
-        <h1 class="text-4xl font-bold mb-6 tracking-tight" data-kr="안녕하세요,<br>프론트엔드 개발자입니다." data-en="Hello,<br>I'm a Frontend Developer.">안녕하세요,<br>프론트엔드 개발자입니다.</h1>
-        <p class="text-muted-foreground mb-12 text-lg" data-kr="상단의 스크롤바와 다크모드, 언어 전환을 테스트해 보세요." data-en="Test the scrollbar, dark mode, and language toggle above.">상단의 스크롤바와 다크모드, 언어 전환을 테스트해 보세요.</p>
-        
-        <div class="space-y-8">
-            <div class="h-64 rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex items-center justify-center bg-muted/30">콘텐츠 1</div>
+    <main class="container mx-auto px-4 py-24 max-w-screen-md relative z-10">
+    <div class="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-orange-400/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+    <div class="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+
+    <div class="text-center mb-16 relative z-10">
+        <div class="flex justify-center gap-2 mb-6 flex-wrap">
+            <span class="px-3 py-1 text-xs font-semibold bg-orange-100 text-orange-600 dark:bg-orange-950/50 dark:text-orange-400 rounded-full">25세 · 02년생</span>
+            <span class="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary rounded-full">데이터사이언스학과</span>
+            <span class="px-3 py-1 text-xs font-semibold bg-accent text-accent-foreground rounded-full">🐣 병아리 개발자</span>
         </div>
-    </main>
+
+        <div class="inline-block p-4 rounded-full bg-primary/20 mb-6 animate-bounce">
+            <span class="text-6xl">🐣</span>
+        </div>
+        
+        <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight" 
+            data-kr="안녕하세요!<br><span class='text-primary'>이가은</span>입니다." 
+            data-en="Hello!<br>I am <span class='text-primary'>Gaeun Lee</span>.">
+            안녕하세요!<br><span class="text-primary">이가은</span>입니다.
+        </h1>
+        
+        <p class="text-xl md:text-2xl font-bold text-orange-500 dark:text-orange-400 mb-6"
+           data-kr="&ldquo;알고리즘은 아직이지만, AI는 진심입니다.&rdquo;"
+           data-en="&ldquo;Algorithms are a work in progress, but I'm dead serious about AI.&rdquo;">
+            "알고리즘은 아직이지만, AI는 진심입니다."
+        </p>
+
+        <p class="text-muted-foreground text-base md:text-lg font-medium" 
+           data-kr="마우스를 움직이거나 스크롤을 내려보세요!<br>뒷배경에 쫑쫑쫑 찍히는 발자국을 볼 수 있습니다 🐾" 
+           data-en="Move your mouse or scroll down!<br>You can see little footprints in the background 🐾">
+            마우스를 움직이거나 스크롤을 내려보세요!<br>뒷배경에 쫑쫑쫑 찍히는 발자국을 볼 수 있습니다 🐾
+        </p>
+    </div>
+    
+    <div class="space-y-8 relative z-10">
+        <div class="h-64 rounded-[2rem] border-2 border-primary/20 bg-card text-card-foreground shadow-lg p-8 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm transition-transform hover:-translate-y-2 duration-300">
+            <i data-lucide="egg-fried" class="h-12 w-12 text-primary mb-4"></i>
+            <h3 class="text-2xl font-bold text-center" 
+                data-kr="아직은 알을 깨고 나온 지 얼마 안 됐어요" 
+                data-en="Just hatched out of the egg">
+                아직은 알을 깨고 나온 지 얼마 안 됐어요
+            </h3>
+            <p class="text-muted-foreground mt-2 text-sm text-center"
+               data-kr="데이터사이언스를 기반으로 탄탄하게 껍질을 깨는 중입니다."
+               data-en="Breaking the shell fully based on Data Science.">
+               데이터사이언스를 기반으로 탄탄하게 껍질을 껍질을 깨는 중입니다.
+            </p>
+        </div>
+
+        <div class="h-64 rounded-[2rem] border-2 border-primary/20 bg-card text-card-foreground shadow-lg p-8 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm transition-transform hover:-translate-y-2 duration-300">
+            <i data-lucide="cpu" class="h-12 w-12 text-orange-400 mb-4"></i>
+            <h3 class="text-2xl font-bold text-center" 
+                data-kr="하지만 매일 새로운 AI 기술을 먹고 자랍니다" 
+                data-en="But I grow by eating new AI technologies everyday">
+                하지만 매일 새로운 AI 기술을 먹고 자랍니다
+            </h3>
+            <p class="text-muted-foreground mt-2 text-sm text-center"
+               data-kr="알고리즘 빈틈은 열정과 성장 속도로 채워나갈게요!"
+               data-en="Filling the algorithm gaps with pure passion and fast learning!">
+               알고리즘 빈틈은 열정과 성장 속도로 채워나갈게요!
+            </p>
+        </div>
+    </div>
+</main>
 
     <script src="js/common.js"></script>
 </body>

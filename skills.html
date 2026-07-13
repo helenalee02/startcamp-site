@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐣 삐약이 프론트엔드 개발자 - 보유 스킬</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))", foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))", },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))", },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))", }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --background: 48 100% 97%; --foreground: 24 50% 20%; --primary: 45 93% 55%; --primary-foreground: 24 50% 20%; 
+                --muted: 45 40% 90%; --muted-foreground: 24 20% 50%; --accent: 30 100% 85%; --accent-foreground: 24 50% 20%;
+                --border: 45 30% 85%; --input: 45 30% 85%; --ring: 45 93% 55%; --radius: 1rem;
+            }
+            .dark {
+                --background: 24 20% 12%; --foreground: 48 100% 90%; --primary: 45 93% 50%; --primary-foreground: 24 20% 12%;
+                --muted: 24 20% 20%; --muted-foreground: 48 40% 70%; --accent: 24 30% 25%; --accent-foreground: 48 100% 90%;
+                --border: 24 20% 25%; --input: 24 20% 25%; --ring: 45 93% 50%;
+            }
+            * { @apply border-border; }
+            body { 
+                @apply bg-background text-foreground antialiased; 
+            }
+        }
+        .nav-link.active { @apply text-primary font-bold relative; }
+        .nav-link.active::after { content: ''; @apply absolute -bottom-[21px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-primary rounded-t-md; }
+    </style>
+
+    <style>
+        body { 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐥</text></svg>'), auto !important;
+        }
+        a, button, [role="button"], input, select, textarea, .nav-link, .cursor-pointer {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐣</text></svg>'), pointer !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden">
+
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-60"></canvas>
+
+    <div id="header-placeholder"></div>
+
+    <!-- 메인 보유 스킬 섹션 -->
+    <main class="container mx-auto px-4 py-24 max-w-screen-md relative z-10">
+        <!-- 상단 헤더 타이틀 -->
+        <div class="mb-12">
+            <p class="text-primary font-black text-sm tracking-widest mb-2 flex items-center gap-2">
+                <span class="bg-primary/20 px-2 py-0.5 rounded-md text-xs font-bold">03</span> STATS & SKILLS
+            </p>
+            <h1 class="text-4xl font-black tracking-tight" data-kr="제 능력치를 소개합니다" data-en="My Growth Stats">
+                제 능력치를 소개합니다
+            </h1>
+            <p class="text-muted-foreground mt-2 text-sm md:text-base" 
+               data-kr="알을 깨고 나와 매일 한 걸음씩 성장하는 가은이의 능력치 카드입니다."
+               data-en="Here is Gaeun's stat card, stepping forward and growing day by day.">
+                알을 깨고 나와 매일 한 걸음씩 성장하는 가은이의 능력치 카드입니다.
+            </p>
+        </div>
+
+        <!-- 스킬 리스트 컨테이너 -->
+        <div class="space-y-8">
+            
+            <!-- 1. 알고리즘 -->
+            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/20 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40">
+                            <i data-lucide="binary" class="h-6 w-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold" data-kr="알고리즘" data-en="Algorithm">알고리즘</h3>
+                    </div>
+                    <span class="text-xl font-black text-orange-500">30%</span>
+                </div>
+                <!-- 프로그레스 바 -->
+                <div class="w-full bg-muted rounded-full h-4 overflow-hidden mb-4 relative">
+                    <div class="stat-bar bg-gradient-to-r from-primary to-orange-400 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%;" data-value="30%"></div>
+                </div>
+                <p class="text-muted-foreground text-sm leading-relaxed" 
+                   data-kr="학교에서 배운 자료구조·알고리즘 수업이 전부예요. 아직 갈 길이 멀지만 성장 가능성은 무궁무진합니다!" 
+                   data-en="Only took university data structures and algorithm classes. Still a long way to go, but unlimited growth potential!">
+                    학교에서 배운 자료구조·알고리즘 수업이 전부예요. 아직 갈 길이 멀지만 성장 가능성은 무궁무진합니다!
+                </p>
+            </div>
+
+            <!-- 2. 개발 기초체력 -->
+            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/20 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-950/40">
+                            <i data-lucide="dumbbell" class="h-6 w-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold" data-kr="개발 기초체력" data-en="Dev Fundamentals">개발 기초체력</h3>
+                    </div>
+                    <span class="text-xl font-black text-orange-500">35%</span>
+                </div>
+                <!-- 프로그레스 바 -->
+                <div class="w-full bg-muted rounded-full h-4 overflow-hidden mb-4 relative">
+                    <div class="stat-bar bg-gradient-to-r from-primary to-orange-400 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%;" data-value="35%"></div>
+                </div>
+                <p class="text-muted-foreground text-sm leading-relaxed" 
+                   data-kr="토이프로젝트는 많이 해봤지만 대부분 AI 도구로 만들어서, 실질적인 개발 기초 지식은 아직 부족해요." 
+                   data-en="Done many toy projects, but mostly with AI tools, so my core development fundamentals are still lacking.">
+                    토이프로젝트는 많이 해봤지만 대부분 AI 도구로 만들어서, 실질적인 개발 기초 지식은 아직 부족해요.
+                </p>
+            </div>
+
+            <!-- 3. AI 탐구열 -->
+            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/25 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-xl bg-primary text-primary-foreground">
+                            <i data-lucide="brain-circuit" class="h-6 w-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold" data-kr="AI 탐구열" data-en="AI Passion">AI 탐구열</h3>
+                    </div>
+                    <span class="text-xl font-black text-primary">95%</span>
+                </div>
+                <!-- 프로그레스 바 -->
+                <div class="w-full bg-muted rounded-full h-4 overflow-hidden mb-4 relative">
+                    <div class="stat-bar bg-gradient-to-r from-orange-400 to-primary h-full rounded-full transition-all duration-1000 ease-out animate-pulse" style="width: 0%;" data-value="95%"></div>
+                </div>
+                <p class="text-muted-foreground text-sm leading-relaxed" 
+                   data-kr="제 전공을 살려서 가장 열심히, 진심으로 공부한 분야예요. 여기만큼은 자신 있습니다!" 
+                   data-en="The field I studied hardest and most passionately in line with my major. Absolutely confident in this!">
+                    제 전공을 살려서 가장 열심히, 진심으로 공부한 분야예요. 여기만큼은 자신 있습니다!
+                </p>
+            </div>
+
+            <!-- 4. 성장 의지 -->
+            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/30 bg-primary/5 text-card-foreground shadow-lg backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-xl bg-orange-500 text-white animate-bounce">
+                            <i data-lucide="trending-up" class="h-6 w-6"></i>
+                        </div>
+                        <h3 class="text-xl font-black" data-kr="성장 의지" data-en="Will to Grow">성장 의지</h3>
+                    </div>
+                    <span class="text-2xl font-black text-orange-500">100% 🔥</span>
+                </div>
+                <!-- 프로그레스 바 -->
+                <div class="w-full bg-muted/60 rounded-full h-5 overflow-hidden mb-4 relative">
+                    <div class="stat-bar bg-gradient-to-r from-orange-400 via-primary to-amber-300 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%;" data-value="100%"></div>
+                </div>
+                <p class="text-foreground/90 font-medium text-sm leading-relaxed" 
+                   data-kr="SSAFY에서 탄탄한 기본기를 쌓고 AI를 살리는 개발자가 되겠다는 의지! 이 항목만큼은 최고치입니다." 
+                   data-en="My determination to build solid fundamentals in SSAFY and become a developer who brings AI to life! This is maxed out.">
+                    SSAFY에서 탄탄한 기본기를 쌓고 AI를 살리는 개발자가 되겠다는 의지! 이 항목만큼은 최고치입니다.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Lucide 아이콘 초기화
+        lucide.createIcons();
+
+        // 페이지 로드 시 그래프 애니메이션 채우기 효과
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const progressBars = document.querySelectorAll('.stat-bar');
+                progressBars.forEach(bar => {
+                    const targetValue = bar.getAttribute('data-value');
+                    bar.style.width = targetValue;
+                });
+            }, 150); // 헤더 마운트 등 약간의 딜레이 후 부드럽게 시작
+        });
+    </script>
+</body>
+</html>

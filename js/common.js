@@ -1,33 +1,26 @@
 // js/common.js
 
-// 1. 공통 헤더를 동적으로 불러오는 함수
-async function loadHeader() {
-    try {
-        const response = await fetch('components/header.html');
-        if (!response.ok) throw new Error('헤더를 불러오는데 실패했습니다.');
-        
-        const headerHtml = await response.text();
-        document.getElementById('header-placeholder').innerHTML = headerHtml;
-        
-        // 헤더 로드 완료 후 기능들 초기화
-        initComponents();
-    } catch (error) {
-        console.error(error);
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. 공통 헤더 불러오기
+    const placeholder = document.getElementById('header-placeholder');
+    if (placeholder) {
+        try {
+            const response = await fetch('components/header.html');
+            const headerHtml = await response.text();
+            placeholder.innerHTML = headerHtml;
+        } catch (error) {
+            console.error('헤더를 불러오는데 실패했습니다.', error);
+        }
     }
-}
 
-// 2. 각종 기능 초기화 함수 (헤더가 DOM에 삽입된 후 실행됨)
-function initComponents() {
-    // [1] 아이콘 초기화 (Lucide)
+    // 2. 아이콘 초기화 (헤더가 로드된 후 실행)
     lucide.createIcons();
 
-    // [2] 다크모드 로직
+    // 3. 다크모드 설정
     const themeToggleBtn = document.getElementById('theme-toggle');
     const iconSun = document.getElementById('icon-sun');
     const iconMoon = document.getElementById('icon-moon');
-    
-    let isDark = localStorage.getItem('theme') === 'dark' || 
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    let isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     const updateThemeUI = () => {
         if (isDark) {
@@ -42,8 +35,7 @@ function initComponents() {
     };
     
     updateThemeUI();
-
-    if (themeToggleBtn) {
+    if(themeToggleBtn) {
         themeToggleBtn.addEventListener('click', () => {
             isDark = !isDark;
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -51,22 +43,20 @@ function initComponents() {
         });
     }
 
-    // [3] 다국어 (KR/EN) 전환 로직
+    // 4. 다국어 전환 설정
     const langToggleBtn = document.getElementById('lang-toggle');
     const langText = document.getElementById('lang-text');
     let currentLang = localStorage.getItem('lang') || 'kr';
 
     const updateLangUI = () => {
         if(langText) langText.innerText = currentLang === 'kr' ? 'EN' : 'KR';
-        // 페이지 전체의 번역 요소 업데이트
         document.querySelectorAll('[data-kr][data-en]').forEach(el => {
             el.innerHTML = el.getAttribute(`data-${currentLang}`);
         });
     };
 
     updateLangUI();
-
-    if (langToggleBtn) {
+    if(langToggleBtn) {
         langToggleBtn.addEventListener('click', () => {
             currentLang = currentLang === 'kr' ? 'en' : 'kr';
             localStorage.setItem('lang', currentLang);
@@ -74,53 +64,191 @@ function initComponents() {
         });
     }
 
-    // [4] 스크롤 진행률 상단바 로직
+    // 5. 스크롤바 진행률
     const scrollProgressBar = document.getElementById('scroll-progress');
-    const updateScrollProgress = () => {
-        if (!scrollProgressBar) return;
+    window.addEventListener('scroll', () => {
+        if(!scrollProgressBar) return;
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
         scrollProgressBar.style.width = `${progress}%`;
-    };
+    }, { passive: true });
 
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
-    updateScrollProgress(); 
-
-    // [5] 현재 페이지 하이라이트 로직
+    // 6. 현재 페이지 네비게이션 하이라이트
     let currentPath = window.location.pathname.split('/').pop(); 
-    if (!currentPath || currentPath === '/' || currentPath.includes('blob')) {
+    if (!currentPath || currentPath === '/' || currentPath.includes('blob') || currentPath === 'iframe.html') {
         currentPath = 'index.html'; 
     }
-
     const navLinks = document.querySelectorAll('.nav-link');
-    let isActiveSet = false;
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
         if (href === currentPath || window.location.href.includes(href)) {
             link.classList.add('active');
-            isActiveSet = true;
         } else {
             link.classList.remove('active');
         }
     });
-    
-    if (!isActiveSet) {
-        const defaultLink = document.querySelector('.nav-link[href="index.html"]');
-        if (defaultLink) defaultLink.classList.add('active');
+
+    // ==========================================
+    // 🐾 7. 병아리 파티클 캔버스 & 마우스 트레일 애니메이션
+    // ==========================================
+    const canvas = document.getElementById('bg-canvas');
+    if(!canvas) return; // 캔버스가 없으면 실행 안함
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let trailParticles = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function drawEgg(x, y, size, rotation, opacity, type) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+        
+        const isDark = document.documentElement.classList.contains('dark');
+        ctx.strokeStyle = isDark ? `rgba(253, 186, 116, ${opacity})` : `rgba(251, 146, 60, ${opacity})`;
+        ctx.fillStyle = isDark ? `rgba(253, 186, 116, ${opacity * 0.2})` : `rgba(251, 146, 60, ${opacity * 0.2})`;
+        
+        ctx.lineWidth = size / 4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (type === 'egg') {
+            ctx.beginPath();
+            ctx.moveTo(0, -size * 1.2);
+            ctx.bezierCurveTo(size * 0.8, -size * 1.2, size * 0.9, size * 0.3, size * 0.7, size * 1);
+            ctx.bezierCurveTo(size * 0.3, size * 1.4, -size * 0.3, size * 1.4, -size * 0.7, size * 1);
+            ctx.bezierCurveTo(-size * 0.9, size * 0.3, -size * 0.8, -size * 1.2, 0, -size * 1.2);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
+        } else {
+            ctx.beginPath();
+            ctx.arc(0, -size * 0.2, size * 0.7, Math.PI, Math.PI * 2);
+            ctx.stroke(); ctx.fill();
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.beginPath(); ctx.arc(-size * 0.3, -size * 0.5, size * 0.12, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(size * 0.3, -size * 0.5, size * 0.12, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(0, -size * 0.4); ctx.lineTo(size * 0.2, -size * 0.25);
+            ctx.lineTo(0, -size * 0.1); ctx.lineTo(-size * 0.2, -size * 0.25);
+            ctx.closePath(); ctx.fill();
+            ctx.fillStyle = isDark ? `rgba(253, 186, 116, ${opacity * 0.3})` : `rgba(251, 146, 60, ${opacity * 0.3})`;
+            ctx.beginPath();
+            ctx.moveTo(-size * 0.85, -size * 0.1);
+            ctx.lineTo(-size * 0.4, -size * 0.3); 
+            ctx.lineTo(0, -size * 0.05);
+            ctx.lineTo(size * 0.4, -size * 0.3);
+            ctx.lineTo(size * 0.85, -size * 0.1);
+            ctx.bezierCurveTo(size * 0.9, size * 0.8, size * 0.5, size * 1.3, 0, size * 1.3);
+            ctx.bezierCurveTo(-size * 0.5, size * 1.3, -size * 0.9, size * 0.8, -size * 0.85, -size * 0.1);
+            ctx.closePath();
+            ctx.stroke(); ctx.fill();
+        }
+        ctx.restore();
     }
 
-    // [6] 이스터에그
-    const easterEggBtn = document.getElementById('easter-egg-btn');
-    if (easterEggBtn) {
-        easterEggBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            alert('🎉 이스터에그 발견! 방명록(Guestbook) 페이지로 이동합니다.');
-            window.location.href = 'guestbook.html'; 
-        });
+    function drawFootprint(x, y, size, rotation, opacity) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+        const isDark = document.documentElement.classList.contains('dark');
+        ctx.strokeStyle = isDark ? `rgba(253, 186, 116, ${opacity})` : `rgba(251, 146, 60, ${opacity})`;
+        ctx.lineWidth = size / 3.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(0, -size); 
+        ctx.moveTo(0, 0); ctx.lineTo(-size * 0.7, -size * 0.7); 
+        ctx.moveTo(0, 0); ctx.lineTo(size * 0.7, -size * 0.7); 
+        ctx.moveTo(0, 0); ctx.lineTo(0, size * 0.4); 
+        ctx.stroke();
+        ctx.restore();
     }
-}
 
-// DOM이 준비되면 헤더를 먼저 불러옵니다.
-document.addEventListener('DOMContentLoaded', loadHeader);
+    class BackgroundParticle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 8 + 10; 
+            this.speedY = Math.random() * -1 - 0.2; 
+            this.speedX = (Math.random() - 0.5) * 0.5;
+            this.rotation = (Math.random() - 0.5) * 0.5; 
+            this.opacity = Math.random() * 0.15 + 0.05;
+            this.type = Math.random() > 0.5 ? 'egg' : 'chick'; 
+        }
+        update() {
+            this.y += this.speedY;
+            this.x += this.speedX;
+            if (this.y < -50) {
+                this.y = canvas.height + 50;
+                this.x = Math.random() * canvas.width;
+                this.type = Math.random() > 0.5 ? 'egg' : 'chick'; 
+            }
+        }
+        draw() {
+            drawEgg(this.x, this.y, this.size, this.rotation, this.opacity, this.type);
+        }
+    }
+
+    class TrailFootprint {
+        constructor(x, y, rotation) {
+            this.x = x; this.y = y;
+            this.size = 10; 
+            this.rotation = rotation;
+            this.opacity = 0.8; 
+        }
+        update() { this.opacity -= 0.015; }
+        draw() { drawFootprint(this.x, this.y, this.size, this.rotation, Math.max(0, this.opacity)); }
+    }
+
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+    let isLeftFoot = true; 
+
+    window.addEventListener('mousemove', (e) => {
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance > 40) { 
+            const angle = Math.atan2(dy, dx) + Math.PI / 2; 
+            const offset = 12; 
+            const offsetX = Math.cos(angle) * (isLeftFoot ? -offset : offset);
+            const offsetY = Math.sin(angle) * (isLeftFoot ? -offset : offset);
+            trailParticles.push(new TrailFootprint(e.clientX + offsetX, e.clientY + offsetY, angle));
+            lastMouseX = e.clientX; lastMouseY = e.clientY;
+            isLeftFoot = !isLeftFoot; 
+        }
+    });
+
+    const particleCount = window.innerWidth > 768 ? 30 : 15; 
+    for(let i = 0; i < particleCount; i++) {
+        particles.push(new BackgroundParticle());
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        for(let i = trailParticles.length - 1; i >= 0; i--) {
+            let p = trailParticles[i];
+            p.update(); p.draw();
+            if(p.opacity <= 0) trailParticles.splice(i, 1);
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener('scroll', () => {
+        const progressEl = document.getElementById('scroll-progress');
+        if (progressEl) {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressEl.style.width = scrollPercent + '%';
+        }
+    });
+});
