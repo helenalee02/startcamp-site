@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 헤더가 안전하게 불러와진 후 아이콘을 다시 한 번 초기화합니다.
             lucide.createIcons();
             
+            // 🐥 병아리 10번 연속 클릭 이스터에그 기능 시작!
+            initChickEasterEgg();
+            
             // 헤더 로드 직후 스크롤바 상태를 한 번 동기화합니다.
             setTimeout(updateScrollProgress, 100);
         } catch (error) {
@@ -272,4 +275,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         requestAnimationFrame(animate);
     }
     animate();
+
+    function initChickEasterEgg() {
+        const chick = document.getElementById('chick-easter-egg');
+        if (!chick) return;
+
+        let clickCount = 0;
+        let lastClickTime = 0;
+
+        chick.addEventListener('click', () => {
+            const currentTime = Date.now();
+            
+            // 1.5초 이상 멍하니 있으면 누적 클릭수 초기화 (연속 다다닥 클릭 유도)
+            if (currentTime - lastClickTime > 1500) {
+                clickCount = 0;
+            }
+            
+            clickCount++;
+            lastClickTime = currentTime;
+
+            // 연속 클릭할 때마다 병아리가 점점 더 커지면서 통통 튀고 좌우로 고개를 흔듭니다.
+            chick.style.transform = `scale(${1 + clickCount * 0.1}) rotate(${clickCount % 2 === 0 ? '15deg' : '-15deg'})`;
+            
+            // 일정 시간 동안 클릭을 멈추면 스르륵 원래 귀여운 1배율 크기로 리턴
+            setTimeout(() => {
+                if (Date.now() - lastClickTime >= 1200) {
+                    chick.style.transform = 'scale(1) rotate(0deg)';
+                }
+            }, 1200);
+
+            // 10번 클릭을 달성하는 순간!
+            if (clickCount >= 10) {
+                // 병아리가 3배로 왕창 커지며 뱅글 회전하는 피날레 연출
+                chick.style.transform = 'scale(3.2) rotate(360deg)';
+                chick.style.transition = 'transform 0.5s ease-in-out';
+                
+                // 극적인 연출 후 비밀 방명록으로 리다이렉트
+                setTimeout(() => {
+                    window.location.href = 'guestbook.html';
+                }, 500);
+            }
+        });
+    }
 });
