@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐣 삐약이 개발자 - 비밀 방명록</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))", foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))", },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))", },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))", }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --background: 48 100% 97%; --foreground: 24 50% 20%; --primary: 45 93% 55%; --primary-foreground: 24 50% 20%; 
+                --muted: 45 40% 90%; --muted-foreground: 24 20% 50%; --accent: 30 100% 85%; --accent-foreground: 24 50% 20%;
+                --border: 45 30% 85%; --input: 45 30% 85%; --ring: 45 93% 55%; --radius: 1rem;
+            }
+            .dark {
+                --background: 24 20% 12%; --foreground: 48 100% 90%; --primary: 45 93% 50%; --primary-foreground: 24 20% 12%;
+                --muted: 24 20% 20%; --muted-foreground: 48 40% 70%; --accent: 24 30% 25%; --accent-foreground: 48 100% 90%;
+                --border: 24 20% 25%; --input: 24 20% 25%; --ring: 45 93% 50%;
+            }
+            * { @apply border-border; }
+            body { 
+                @apply bg-background text-foreground antialiased; 
+            }
+        }
+    </style>
+
+    <style>
+        body { 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐥</text></svg>'), auto !important;
+        }
+        a, button, [role="button"], input, select, textarea, .nav-link, .cursor-pointer {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐣</text></svg>'), pointer !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden pb-16">
+
+    <!-- 캔버스 배경 -->
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-60"></canvas>
+
+    <!-- 공통 헤더 로드 홀더 -->
+    <div id="header-placeholder"></div>
+
+    <!-- 메인 방명록 영역 -->
+    <main class="container mx-auto px-4 py-28 max-w-screen-md relative z-10">
+        
+        <!-- 상단 헤더 타이틀 -->
+        <div class="mb-10 text-center">
+            <span class="inline-block px-3 py-1 text-xs font-bold bg-primary/20 text-orange-600 dark:text-orange-400 rounded-full mb-3 animate-pulse">SECRET PAGE 🥚</span>
+            <h1 class="text-4xl font-black tracking-tight mb-2" data-kr="🐣 가은이의 비밀 방명록" data-en="🐥 Gaeun's Secret Guestbook">
+                🐣 가은이의 비밀 방명록
+            </h1>
+            <p class="text-muted-foreground text-sm" data-kr="달걀 이스터에그를 발견하셨군요! 흔적을 남겨주세요 💕" data-en="You found the easter egg! Leave your footprint here 💕">
+                달걀 이스터에그를 발견하셨군요! 흔적을 남겨주세요 💕
+            </p>
+        </div>
+
+        <!-- 1. 방명록 작성 폼 카드 -->
+        <div class="p-6 md:p-8 rounded-[2.5rem] border-2 border-primary/25 bg-card/90 shadow-xl backdrop-blur-sm mb-10">
+            <form id="guestbook-form" class="space-y-4">
+                
+                <!-- 캐릭터 아바타 선택 섹션 -->
+                <div>
+                    <label class="block text-sm font-bold mb-2 text-muted-foreground" data-kr="나만의 캐릭터 선택" data-en="Select Your Character">나만의 캐릭터 선택</label>
+                    <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                        <label class="avatar-label shrink-0">
+                            <input type="radio" name="avatar" value="🐣" checked class="hidden peer">
+                            <span class="w-12 h-12 rounded-2xl bg-muted dark:bg-muted/30 flex items-center justify-center text-2xl border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/20 transition-all cursor-pointer">🐣</span>
+                        </label>
+                        <label class="avatar-label shrink-0">
+                            <input type="radio" name="avatar" value="🐥" class="hidden peer">
+                            <span class="w-12 h-12 rounded-2xl bg-muted dark:bg-muted/30 flex items-center justify-center text-2xl border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/20 transition-all cursor-pointer">🐥</span>
+                        </label>
+                        <label class="avatar-label shrink-0">
+                            <input type="radio" name="avatar" value="🐔" class="hidden peer">
+                            <span class="w-12 h-12 rounded-2xl bg-muted dark:bg-muted/30 flex items-center justify-center text-2xl border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/20 transition-all cursor-pointer">🐔</span>
+                        </label>
+                        <label class="avatar-label shrink-0">
+                            <input type="radio" name="avatar" value="🥚" class="hidden peer">
+                            <span class="w-12 h-12 rounded-2xl bg-muted dark:bg-muted/30 flex items-center justify-center text-2xl border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/20 transition-all cursor-pointer">🥚</span>
+                        </label>
+                        <label class="avatar-label shrink-0">
+                            <input type="radio" name="avatar" value="🧸" class="hidden peer">
+                            <span class="w-12 h-12 rounded-2xl bg-muted dark:bg-muted/30 flex items-center justify-center text-2xl border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/20 transition-all cursor-pointer">🧸</span>
+                        </label>
+                        <label class="avatar-label shrink-0">
+                            <input type="radio" name="avatar" value="🔥" class="hidden peer">
+                            <span class="w-12 h-12 rounded-2xl bg-muted dark:bg-muted/30 flex items-center justify-center text-2xl border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/20 transition-all cursor-pointer">🔥</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 닉네임 & 비밀번호 입력부 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1 text-muted-foreground" data-kr="닉네임" data-en="Nickname">닉네임</label>
+                        <input type="text" id="guest-name" maxlength="12" required class="w-full px-4 py-2.5 rounded-2xl bg-background border-2 border-primary/10 focus:border-primary outline-none text-sm transition-all" placeholder="이름을 적어주세요">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1 text-muted-foreground" data-kr="삭제용 비밀번호" data-en="Delete Password">삭제용 비밀번호</label>
+                        <input type="password" id="guest-pw" maxlength="8" required class="w-full px-4 py-2.5 rounded-2xl bg-background border-2 border-primary/10 focus:border-primary outline-none text-sm transition-all" placeholder="숫자 4자리">
+                    </div>
+                </div>
+
+                <!-- 메시지 텍스트 입력부 -->
+                <div>
+                    <label class="block text-sm font-bold mb-1 text-muted-foreground" data-kr="응원 한마디" data-en="Your Message">응원 한마디</label>
+                    <textarea id="guest-msg" rows="3" maxlength="150" required class="w-full px-4 py-3 rounded-2xl bg-background border-2 border-primary/10 focus:border-primary outline-none text-sm resize-none transition-all" placeholder="따뜻한 격려나 흔적을 새겨보세요!"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-primary hover:bg-primary/95 text-primary-foreground font-black rounded-2xl transition-transform hover:scale-[1.01] active:scale-95 shadow-md flex items-center justify-center gap-1">
+                    <i data-lucide="send" class="h-4 w-4"></i> <span data-kr="흔적 쫑쫑 남기기" data-en="Leave Footprint">흔적 쫑쫑 남기기</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- 2. 방명록 목록 피드 -->
+        <div class="space-y-4" id="guestbook-list">
+            <!-- 자바스크립트로 동적 생성 -->
+        </div>
+
+    </main>
+
+    <!-- 3. 경고/알림을 띄우기 위한 무-alert 커스텀 토스트 & 모달 -->
+    <div id="toast-notif" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 bg-foreground text-background font-bold text-sm rounded-full shadow-2xl z-[150] transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none"></div>
+
+    <!-- 삭제 인증 모달 -->
+    <div id="delete-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4">
+        <div class="bg-card w-full max-w-sm rounded-3xl border-2 border-primary/20 p-6 shadow-2xl relative">
+            <button id="close-delete-modal" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+            <h3 class="text-lg font-bold mb-1" data-kr="🔒 방명록 지우기" data-en="🔒 Delete Message">🔒 방명록 지우기</h3>
+            <p class="text-xs text-muted-foreground mb-4" data-kr="작성할 때 사용했던 비밀번호를 입력해 주세요." data-en="Enter the password you used during creation.">작성할 때 사용했던 비밀번호를 입력해 주세요.</p>
+            <input type="password" id="confirm-pw" class="w-full px-4 py-2 rounded-2xl bg-background border-2 border-primary/10 focus:border-primary outline-none text-sm mb-4" placeholder="비밀번호 4자리">
+            <button id="btn-delete-confirm" class="w-full py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-2xl text-sm shadow-md transition-all">
+                지우기
+            </button>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        const DEFAULT_MESSAGES = [
+            { id: 1, avatar: '🐣', name: 'SSAFY 동기', msg: '가은아 SSAFY 입학 축하해! 우리 끝까지 무사 수료해서 같이 AI 정복해보자 🔥', date: '2026.07.13', pw: '1234' },
+            { id: 2, avatar: '🐥', name: '캘박 증인 친구', msg: '너 성격 페이지에 캘박 마스터 적힌 거 진짜 하이퍼리얼리즘이다 ㅋㅋㅋ 캘박 까먹지 마셈!', date: '2026.07.12', pw: '1234' },
+            { id: 3, avatar: '🐔', name: '지나가던 선배', msg: '전공이 데이터사이언스라니 기초체력 금방 쌓일 겁니다. 삐약이 프론트엔드 포트폴리오 너무 귀여워요!', date: '2026.07.10', pw: '1234' }
+        ];
+
+        // 방명록 리스트 조회
+        function getMessages() {
+            const data = localStorage.getItem('peep_guestbook');
+            if (!data) {
+                localStorage.setItem('peep_guestbook', JSON.stringify(DEFAULT_MESSAGES));
+                return DEFAULT_MESSAGES;
+            }
+            return JSON.parse(data);
+        }
+
+        // 방명록 렌더링
+        function renderMessages() {
+            const list = document.getElementById('guestbook-list');
+            list.innerHTML = '';
+            const msgs = getMessages().reverse(); // 최근 글이 위로 오도록 반전
+            const currentLang = localStorage.getItem('lang') || 'kr';
+
+            msgs.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "p-5 rounded-2xl border border-primary/10 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-all hover:border-primary/25 duration-300 flex items-start gap-4";
+                card.innerHTML = `
+                    <div class="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center text-2xl shrink-0">
+                        ${item.avatar}
+                    </div>
+                    <div class="w-full relative">
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-sm">${item.name}</span>
+                                <span class="text-[10px] text-muted-foreground font-medium">${item.date}</span>
+                            </div>
+                            <!-- 삭제 버튼 -->
+                            <button class="delete-trigger-btn text-muted-foreground hover:text-red-500 transition-colors p-1" data-id="${item.id}">
+                                <i data-lucide="trash-2" class="h-4 w-4"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm text-foreground/90 whitespace-pre-line leading-relaxed">${item.msg}</p>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // 토스트 알림 작동 함수
+        function showToast(message) {
+            const toast = document.getElementById('toast-notif');
+            toast.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+
+        // 폼 등록 이벤트 바인딩
+        document.getElementById('guestbook-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const avatar = document.querySelector('input[name="avatar"]:checked').value;
+            const name = document.getElementById('guest-name').value.trim();
+            const pw = document.getElementById('guest-pw').value.trim();
+            const msg = document.getElementById('guest-msg').value.trim();
+
+            if(!name || !pw || !msg) {
+                showToast("빈 칸을 빠짐없이 채워주세요! 🐥");
+                return;
+            }
+
+            const today = new Date();
+            const formattedDate = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+
+            const newMsg = {
+                id: Date.now(),
+                avatar,
+                name,
+                pw,
+                msg,
+                date: formattedDate
+            };
+
+            const msgs = getMessages();
+            msgs.push(newMsg);
+            localStorage.setItem('peep_guestbook', JSON.stringify(msgs));
+
+            // 인풋 리셋
+            document.getElementById('guest-name').value = '';
+            document.getElementById('guest-pw').value = '';
+            document.getElementById('guest-msg').value = '';
+            
+            showToast("방명록에 발자국을 쾅! 남겼습니다 🐾");
+            renderMessages();
+        });
+
+        // 삭제 처리 관련 제어
+        let targetDeleteId = null;
+        const deleteModal = document.getElementById('delete-modal');
+        const confirmPwInput = document.getElementById('confirm-pw');
+
+        document.getElementById('guestbook-list').addEventListener('click', (e) => {
+            const delBtn = e.target.closest('.delete-trigger-btn');
+            if (delBtn) {
+                targetDeleteId = parseInt(delBtn.getAttribute('data-id'), 10);
+                confirmPwInput.value = '';
+                deleteModal.classList.remove('hidden');
+                deleteModal.classList.add('flex');
+            }
+        });
+
+        document.getElementById('close-delete-modal').addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+            deleteModal.classList.remove('flex');
+        });
+
+        document.getElementById('btn-delete-confirm').addEventListener('click', () => {
+            const enteredPw = confirmPwInput.value;
+            const msgs = getMessages();
+            const targetIndex = msgs.findIndex(m => m.id === targetDeleteId);
+
+            if (targetIndex > -1) {
+                if (msgs[targetIndex].pw === enteredPw) {
+                    msgs.splice(targetIndex, 1);
+                    localStorage.setItem('peep_guestbook', JSON.stringify(msgs));
+                    deleteModal.classList.add('hidden');
+                    deleteModal.classList.remove('flex');
+                    showToast("방명록을 깔끔히 지웠습니다! 🧹");
+                    renderMessages();
+                } else {
+                    showToast("비밀번호가 올바르지 않습니다 ⚠️");
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMessages();
+        });
+    </script>
+</body>
+</html>
