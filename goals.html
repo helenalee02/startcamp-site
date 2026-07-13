@@ -18,6 +18,45 @@
                         primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))", },
                         muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))", },
                         accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))", }
+                    },
+                    // 고속 질주 및 부위별 정밀 달리기 모션을 위한 커스텀 애니메이션들
+                    animation: {
+                        'chick-dash': 'chick-dash-action 0.4s infinite linear',
+                        'chick-wing': 'chick-wing-flap 0.15s infinite ease-in-out',
+                        'leg-back': 'leg-swing-back 0.3s infinite ease-in-out',
+                        'leg-front': 'leg-swing-front 0.3s infinite ease-in-out',
+                        'dust-puff': 'dust-puff-action 0.5s infinite linear',
+                        'speed-line': 'speed-line-action 0.8s infinite linear',
+                    },
+                    keyframes: {
+                        'chick-dash-action': {
+                            '0%': { transform: 'translateY(0) rotate(8deg) scale(1.03, 0.97)' },
+                            '25%': { transform: 'translateY(-3px) rotate(11deg) scale(0.97, 1.03)' },
+                            '50%': { transform: 'translateY(0) rotate(8deg) scale(1.03, 0.97)' },
+                            '75%': { transform: 'translateY(-3px) rotate(5deg) scale(0.97, 1.03)' },
+                            '100%': { transform: 'translateY(0) rotate(8deg) scale(1.03, 0.97)' }
+                        },
+                        'chick-wing-flap': {
+                            '0%, 100%': { transform: 'rotate(0deg)' },
+                            '50%': { transform: 'rotate(-28deg)' }
+                        },
+                        'leg-swing-back': {
+                            '0%, 100%': { transform: 'rotate(-30deg)' },
+                            '50%': { transform: 'rotate(35deg)' }
+                        },
+                        'leg-swing-front': {
+                            '0%, 100%': { transform: 'rotate(35deg)' },
+                            '50%': { transform: 'rotate(-30deg)' }
+                        },
+                        'dust-puff-action': {
+                            '0%': { transform: 'translateX(0) scale(0.7) rotate(0deg)', opacity: '0.9' },
+                            '100%': { transform: 'translateX(-18px) scale(0.3) rotate(-30deg)', opacity: '0' }
+                        },
+                        'speed-line-action': {
+                            '0%': { width: '0px', opacity: '0.8', transform: 'translateX(0)' },
+                            '50%': { width: '16px', opacity: '0.5' },
+                            '100%': { width: '0px', opacity: '0', transform: 'translateX(-24px)' }
+                        }
                     }
                 }
             }
@@ -55,10 +94,10 @@
 </head>
 <body class="min-h-screen relative overflow-x-hidden pb-16">
 
-    <!-- 병아리 파티클 배경 캔버스 (js/common.js 연동) -->
+    <!-- 병아리 파티클 배경 캔버스 -->
     <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-60"></canvas>
 
-    <!-- 공통 헤더가 주입되는 공간 (fixed 상단바가 적용되어 있습니다) -->
+    <!-- 공통 헤더 주입 공간 -->
     <div id="header-placeholder"></div>
 
     <!-- 메인 목표 섹션 -->
@@ -107,9 +146,60 @@
                             <span class="pct text-xl font-black text-orange-500 tracking-wider shrink-0" data-target="15">0%</span>
                         </div>
                         
-                        <!-- 프로그레스 게이지 바 -->
-                        <div class="w-full bg-muted rounded-full h-4 overflow-hidden mb-4 relative border border-primary/5">
-                            <div class="progress-fill bg-gradient-to-r from-primary to-orange-400 h-full rounded-full transition-all duration-[1500ms] ease-out" style="width: 0%;" data-value="15%"></div>
+                        <!-- 경기장 러닝 트랙 가이드 및 보드 -->
+                        <div class="w-full bg-orange-100/40 dark:bg-orange-950/20 rounded-[1.25rem] h-14 mb-4 relative border-2 border-orange-200 dark:border-orange-900/40 p-1 flex items-center overflow-visible shadow-inner">
+                            
+                            <!-- 트랙 중앙 점선 가이드 라인 -->
+                            <div class="absolute left-10 right-10 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-orange-200 dark:border-orange-900/60 pointer-events-none"></div>
+                            
+                            <!-- START 텍스트 마일스톤 -->
+                            <div class="absolute left-2.5 text-[9px] font-black tracking-widest text-orange-400 dark:text-orange-600/70 select-none z-0">ST</div>
+                            
+                            <!-- 실제 전진하는 트랙 강조 라인 -->
+                            <div class="progress-fill bg-gradient-to-r from-amber-300 via-primary to-orange-500 h-full rounded-l-[1rem] transition-all duration-[1500ms] ease-out relative flex items-center justify-end" style="width: 0%;" data-value="15%">
+                                
+                                <!-- 가속 질주하는 옆모습 병아리 세트 -->
+                                <div class="absolute -right-[26px] -top-3.5 flex items-center select-none z-20">
+                                    <!-- 뒤쪽 먼지 구름 및 가속 라인 -->
+                                    <div class="absolute -left-1.5 top-5 text-xs animate-dust-puff pointer-events-none">💨</div>
+                                    <div class="absolute -left-4 top-6 h-[2px] bg-amber-400/80 rounded-full animate-speed-line pointer-events-none"></div>
+                                    
+                                    <!-- 커스텀 3D 옆모습 달리기 병아리 SVG -->
+                                    <svg viewBox="0 0 100 100" class="w-14 h-14 origin-bottom animate-chick-dash drop-shadow-[0_2.5px_4px_rgba(0,0,0,0.15)]">
+                                        <!-- 뒷발 (달리기 축) -->
+                                        <g class="animate-leg-back" style="transform-origin: 42px 60px;">
+                                            <path d="M 42 60 L 32 74 L 24 74" stroke="#EA580C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                        </g>
+                                        <!-- 앞발 (전방 추진) -->
+                                        <g class="animate-leg-front" style="transform-origin: 50px 60px;">
+                                            <path d="M 50 60 L 58 74 L 68 74" stroke="#EA580C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                        </g>
+                                        <!-- 몸뚱이 베이스 -->
+                                        <path d="M 32 46 C 22 46, 22 62, 42 62 C 58 62, 70 54, 70 42 C 70 30, 58 26, 42 26 C 28 26, 32 46, 32 46 Z" fill="#FBBF24" />
+                                        <!-- 얼굴 밝은 하이라이트 레이어 -->
+                                        <circle cx="54" cy="38" r="16" fill="#FDE047" />
+                                        <!-- 수줍은 핑크 볼터치 -->
+                                        <circle cx="62" cy="44" r="4.5" fill="#FDA4AF" opacity="0.8" />
+                                        <!-- 앞을 향해 동그래진 초롱초롱 눈망울 -->
+                                        <ellipse cx="60" cy="33" rx="3" ry="5" fill="#1F2937" />
+                                        <circle cx="61.5" cy="31" r="1.2" fill="#FFFFFF" />
+                                        <!-- 정밀 조각된 부리 (오른쪽 전방 지향) -->
+                                        <path d="M 70 34 L 78 39 L 68 44 Z" fill="#F97316" stroke="#EA580C" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+                                        <!-- 펄럭이는 깜찍한 아기 날개 -->
+                                        <g class="animate-chick-wing" style="transform-origin: 38px 45px;">
+                                            <path d="M 38 45 C 28 42, 26 54, 42 50 Z" fill="#F59E0B" />
+                                        </g>
+                                        <!-- 아기 잔머리 깃털 두 가닥 -->
+                                        <path d="M 46 24 Q 42 16 48 14" stroke="#FBBF24" stroke-width="2.5" stroke-linecap="round" fill="none" />
+                                        <path d="M 50 24 Q 52 17 56 17" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" fill="none" />
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <!-- FINISH 깃발 마일스톤 영역 -->
+                            <div class="absolute right-3 text-muted-foreground/60 flex items-center justify-center bg-card dark:bg-muted p-1.5 rounded-lg border border-primary/20 shadow-sm z-10">
+                                <i data-lucide="flag" class="w-4.5 h-4.5 text-orange-500 animate-bounce"></i>
+                            </div>
                         </div>
 
                         <p class="text-muted-foreground text-sm md:text-base leading-relaxed" 
@@ -135,9 +225,60 @@
                             <span class="pct text-xl font-black text-orange-500 tracking-wider shrink-0" data-target="35">0%</span>
                         </div>
                         
-                        <!-- 프로그레스 게이지 바 -->
-                        <div class="w-full bg-muted rounded-full h-4 overflow-hidden mb-4 relative border border-primary/5">
-                            <div class="progress-fill bg-gradient-to-r from-primary to-orange-400 h-full rounded-full transition-all duration-[1500ms] ease-out" style="width: 0%;" data-value="35%"></div>
+                        <!-- 경기장 러닝 트랙 가이드 및 보드 -->
+                        <div class="w-full bg-orange-100/40 dark:bg-orange-950/20 rounded-[1.25rem] h-14 mb-4 relative border-2 border-orange-200 dark:border-orange-900/40 p-1 flex items-center overflow-visible shadow-inner">
+                            
+                            <!-- 트랙 중앙 점선 가이드 라인 -->
+                            <div class="absolute left-10 right-10 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-orange-200 dark:border-orange-900/60 pointer-events-none"></div>
+                            
+                            <!-- START 텍스트 마일스톤 -->
+                            <div class="absolute left-2.5 text-[9px] font-black tracking-widest text-orange-400 dark:text-orange-600/70 select-none z-0">ST</div>
+                            
+                            <!-- 실제 전진하는 트랙 강조 라인 -->
+                            <div class="progress-fill bg-gradient-to-r from-amber-300 via-primary to-orange-500 h-full rounded-l-[1rem] transition-all duration-[1500ms] ease-out relative flex items-center justify-end" style="width: 0%;" data-value="35%">
+                                
+                                <!-- 가속 질주하는 옆모습 병아리 세트 -->
+                                <div class="absolute -right-[26px] -top-3.5 flex items-center select-none z-20">
+                                    <!-- 뒤쪽 먼지 구름 및 가속 라인 -->
+                                    <div class="absolute -left-1.5 top-5 text-xs animate-dust-puff pointer-events-none">💨</div>
+                                    <div class="absolute -left-4 top-6 h-[2px] bg-amber-400/80 rounded-full animate-speed-line pointer-events-none"></div>
+                                    
+                                    <!-- 커스텀 3D 옆모습 달리기 병아리 SVG -->
+                                    <svg viewBox="0 0 100 100" class="w-14 h-14 origin-bottom animate-chick-dash drop-shadow-[0_2.5px_4px_rgba(0,0,0,0.15)]">
+                                        <!-- 뒷발 -->
+                                        <g class="animate-leg-back" style="transform-origin: 42px 60px;">
+                                            <path d="M 42 60 L 32 74 L 24 74" stroke="#EA580C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                        </g>
+                                        <!-- 앞발 -->
+                                        <g class="animate-leg-front" style="transform-origin: 50px 60px;">
+                                            <path d="M 50 60 L 58 74 L 68 74" stroke="#EA580C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                        </g>
+                                        <!-- 몸뚱이 베이스 -->
+                                        <path d="M 32 46 C 22 46, 22 62, 42 62 C 58 62, 70 54, 70 42 C 70 30, 58 26, 42 26 C 28 26, 32 46, 32 46 Z" fill="#FBBF24" />
+                                        <!-- 얼굴 밝은 하이라이트 -->
+                                        <circle cx="54" cy="38" r="16" fill="#FDE047" />
+                                        <!-- 볼터치 -->
+                                        <circle cx="62" cy="44" r="4.5" fill="#FDA4AF" opacity="0.8" />
+                                        <!-- 눈망울 -->
+                                        <ellipse cx="60" cy="33" rx="3" ry="5" fill="#1F2937" />
+                                        <circle cx="61.5" cy="31" r="1.2" fill="#FFFFFF" />
+                                        <!-- 부리 -->
+                                        <path d="M 70 34 L 78 39 L 68 44 Z" fill="#F97316" stroke="#EA580C" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+                                        <!-- 날개 -->
+                                        <g class="animate-chick-wing" style="transform-origin: 38px 45px;">
+                                            <path d="M 38 45 C 28 42, 26 54, 42 50 Z" fill="#F59E0B" />
+                                        </g>
+                                        <!-- 머리 깃털 -->
+                                        <path d="M 46 24 Q 42 16 48 14" stroke="#FBBF24" stroke-width="2.5" stroke-linecap="round" fill="none" />
+                                        <path d="M 50 24 Q 52 17 56 17" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" fill="none" />
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <!-- FINISH 지점 번개 마일스톤 영역 -->
+                            <div class="absolute right-3 text-muted-foreground/60 flex items-center justify-center bg-card dark:bg-muted p-1.5 rounded-lg border border-primary/20 shadow-sm z-10">
+                                <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500 animate-pulse"></i>
+                            </div>
                         </div>
 
                         <p class="text-muted-foreground text-sm md:text-base leading-relaxed" 
