@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐣 삐약이 개발자 - 성격</title>
+    <title>🐣 삐약이 개발자 - 성격 분석</title>
     
+    <!-- 외부 스크립트 로드 (Tailwind CSS, Lucide 아이콘) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -13,22 +14,26 @@
             theme: {
                 extend: {
                     colors: {
-                        border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
-                        background: "hsl(var(--background))", foreground: "hsl(var(--foreground))",
-                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))", },
-                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))", },
-                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))", }
+                        border: "hsl(var(--border))", 
+                        input: "hsl(var(--input))", 
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))", 
+                        foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" }
                     }
                 }
             }
         }
     </script>
+    
     <style type="text/tailwindcss">
         @layer base {
             :root {
                 --background: 48 100% 97%; --foreground: 24 50% 20%; --primary: 45 93% 55%; --primary-foreground: 24 50% 20%; 
                 --muted: 45 40% 90%; --muted-foreground: 24 20% 50%; --accent: 30 100% 85%; --accent-foreground: 24 50% 20%;
-                --border: 45 30% 85%; --input: 45 30% 85%; --ring: 45 93% 55%; --radius: 1rem;
+                --border: 45 30% 85%; --input: 45 30% 85%; --ring: 45 93% 55%; --radius: 1.5rem;
             }
             .dark {
                 --background: 24 20% 12%; --foreground: 48 100% 90%; --primary: 45 93% 50%; --primary-foreground: 24 20% 12%;
@@ -37,153 +42,390 @@
             }
             * { @apply border-border; }
             body { 
-                @apply bg-background text-foreground antialiased; 
+                @apply bg-background text-foreground antialiased transition-colors duration-300; 
             }
         }
         .nav-link.active { @apply text-primary font-bold relative; }
         .nav-link.active::after { content: ''; @apply absolute -bottom-[21px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-primary rounded-t-md; }
     </style>
 
+    <!-- 3D 햅틱 카드 스타일 및 호버 셰이딩 효과 -->
     <style>
         body { 
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐥</text></svg>'), auto !important;
         }
-        a, button, [role="button"], input, select, textarea, .nav-link, .cursor-pointer {
+        a, button, [role="button"], input, select, textarea, .nav-link, .cursor-pointer, .card-container {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐣</text></svg>'), pointer !important;
+        }
+
+        /* 3D 카드를 구현하기 위한 무대 설정 */
+        .card-perspective {
+            perspective: 1200px;
+        }
+        /* 카드 껍데기 */
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        /* 카드가 활성화(클릭)되었을 때 반전 회전 */
+        .card-container.is-flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        /* 카드의 앞뒷면 공통 속성 */
+        .card-front, .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            border-radius: 2rem;
+            overflow: hidden;
+        }
+        /* 카드의 뒷면 초기 상태 (기본적으로 180도 뒤집혀 있음) */
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* 은근하게 흘러가는 광택 효과 */
+        .shimmer::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                115deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0) 35%,
+                rgba(255, 255, 255, 0.2) 48%,
+                rgba(255, 255, 255, 0.45) 50%,
+                rgba(255, 255, 255, 0.2) 52%,
+                rgba(255, 255, 255, 0) 65%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(-15deg);
+            transition: all 0.1s ease;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .card-container:hover .shimmer::before {
+            animation: shine 1.8s infinite linear;
+        }
+        @keyframes shine {
+            0% { transform: translate(-30%, -30%) rotate(-15deg); }
+            100% { transform: translate(30%, 30%) rotate(-15deg); }
         }
     </style>
 </head>
 <body class="min-h-screen relative overflow-x-hidden">
 
-    <!-- 병아리가 날아다니는 배경 캔버스 (common.js에서 제어) -->
+    <!-- 부드러운 분위기를 자아내는 백그라운드 캔버스 -->
     <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-60"></canvas>
 
-    <!-- 공통 헤더가 주입되는 공간 (fixed 상단바 적용됨) -->
-    <div id="header-placeholder"></div>
+    <!-- 상단 고정 네비게이션 헤더 바 -->
+    <div id="header-placeholder" class="fixed top-0 left-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-primary/10">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 font-black text-lg">
+                <span>🐣</span> <span class="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">PIYAK DEV</span>
+            </div>
+            <div class="flex items-center gap-6 text-sm font-medium">
+                <a href="#" class="nav-link text-muted-foreground hover:text-foreground transition-colors">Profile</a>
+                <a href="#" class="nav-link text-muted-foreground hover:text-foreground transition-colors">Skills</a>
+                <a href="#" class="nav-link active">Personality</a>
+                <button id="dark-mode-toggle" class="p-2 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors" aria-label="Toggle theme">
+                    <i data-lucide="moon" class="h-4 w-4 text-primary"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- 메인 콘텐츠 영역 -->
-    <main class="container mx-auto px-4 py-28 max-w-screen-md relative z-10">
-        <!-- 상단 타이틀 섹션 -->
-        <div class="mb-12 text-center md:text-left">
-            <p class="text-primary font-black text-sm tracking-widest mb-2 flex items-center justify-center md:justify-start gap-2">
-                <span class="bg-primary/20 px-2 py-0.5 rounded-md text-xs font-bold">03</span> PERSONALITY
+    <main class="container mx-auto px-4 py-28 max-w-screen-lg relative z-10">
+        <!-- 상단 세련된 타이틀 헤더 -->
+        <div class="mb-14 text-center">
+            <p class="text-primary font-black text-sm tracking-widest mb-3 flex items-center justify-center gap-2">
+                <span class="bg-primary/20 px-2.5 py-1 rounded-md text-xs font-black tracking-normal">03</span> PERSONALITY PROFILE
             </p>
-            <h1 class="text-4xl font-black tracking-tight mb-3" data-kr="나의 입체적인 성격 분석" data-en="Unraveling My Personality">
+            <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 text-foreground" data-kr="나의 성격 분석" data-en="Unraveling My Personality">
                 나의 입체적인 성격 분석
             </h1>
+            
         </div>
 
-        <!-- MBTI 메인 인포그래픽 카드 -->
-        <div class="mb-10 p-8 rounded-[2.5rem] border-2 border-primary/20 bg-gradient-to-br from-primary/10 via-card/50 to-orange-500/10 text-card-foreground shadow-xl backdrop-blur-sm relative overflow-hidden">
+        <!-- MBTI 메인 정보 요약 카드 -->
+        <div class="mb-14 max-w-screen-md mx-auto p-8 rounded-[2.5rem] border-2 border-primary/20 bg-gradient-to-br from-primary/10 via-card/50 to-orange-500/10 text-card-foreground shadow-xl backdrop-blur-sm relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-40 h-40 bg-orange-400/10 rounded-full blur-2xl pointer-events-none"></div>
             
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="text-center md:text-left">
-                    <span class="inline-block px-3 py-1 text-xs font-bold bg-primary text-primary-foreground rounded-full mb-3 shadow-sm">My Type is</span>
                     <h2 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-primary tracking-wider">ENTP</h2>
-                    <p class="text-muted-foreground mt-2 font-medium" data-kr="뜨거운 논쟁을 즐기는 변론가, 하지만 가끔은 수줍은 병아리" data-en="An enthusiastic debater, but sometimes a shy little chick">
-                        뜨거운 논쟁을 즐기는 변론가, 하지만 가끔은 수줍은 병아리
+                    <p class="text-muted-foreground mt-2 font-semibold text-sm md:text-base" data-kr="뜨거운 논쟁을 즐기는 변론가" data-en="An enthusiastic debater">
+                        뜨거운 논쟁을 즐기는 변론가
                     </p>
                 </div>
-                <div class="flex gap-2">
-                    <span class="w-12 h-12 rounded-2xl bg-card border border-primary/20 flex items-center justify-center font-bold text-lg text-primary shadow-sm hover:scale-110 transition-transform">E</span>
-                    <span class="w-12 h-12 rounded-2xl bg-card border border-primary/20 flex items-center justify-center font-bold text-lg text-primary shadow-sm hover:scale-110 transition-transform">N</span>
-                    <span class="w-12 h-12 rounded-2xl bg-card border border-primary/20 flex items-center justify-center font-bold text-lg text-primary shadow-sm hover:scale-110 transition-transform">T</span>
-                    <span class="w-12 h-12 rounded-2xl bg-card border border-primary/20 flex items-center justify-center font-bold text-lg text-primary shadow-sm hover:scale-110 transition-transform">P</span>
-                </div>
             </div>
         </div>
 
-        <!-- 성격 세부 4대 카드 (알파벳-아이콘 위치 전면 교체 및 P 카드 스타일 통일) -->
-        <div class="space-y-6">
+<!-- 성격 세부 4대 플립 카드 그리드 (2x2 구성) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+    
+    <!-- E: Extraversion Card -->
+    <div class="card-container card-perspective" onclick="flipCard(this)">
+        <!-- card-inner에 rounded-3xl 및 overflow-hidden 추가하여 그림자/위치이동 시 각지는 현상 방지 -->
+        <div class="card-inner rounded-3xl overflow-hidden shadow-lg transition-transform hover:-translate-y-2 hover:shadow-2xl">
             
-            <!-- E: Extraversion -->
-            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/10 bg-card/80 shadow-md backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/30 duration-300">
-                <div class="flex items-start space-x-4">
-                    <div class="w-14 h-14 rounded-2xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 shrink-0 flex items-center justify-center font-black text-2xl shadow-sm">
+            <!-- E CARD FRONT (rounded-3xl 추가) -->
+            <div class="card-front shimmer bg-card border-2 border-primary/20 p-8 flex flex-col justify-between items-center text-center relative rounded-3xl overflow-hidden">
+                <div class="absolute top-4 right-4 text-xs font-bold text-primary/40 bg-primary/5 px-2.5 py-1 rounded-full border border-primary/10">INTERACTIVE</div>
+                
+                <div class="my-auto flex flex-col items-center">
+                    <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-orange-400 to-amber-400 text-white flex items-center justify-center font-black text-5xl shadow-md mb-6 hover:scale-105 transition-transform duration-300">
                         E
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="user-check" class="h-5 w-5 text-orange-500 dark:text-orange-400 shrink-0"></i>
-                            <h3 class="text-xl font-bold" data-kr="인사는 수줍지만, 안면 트면 초고속 친해지기!" data-en="Shy Greetings, Lightning Connections!">인사는 수줍지만, 안면 트면 초고속 친해지기!</h3>
-                        </div>
-                        <p class="text-muted-foreground mt-3 text-sm md:text-base leading-relaxed" 
-                           data-kr="처음엔 낯을 가려서 인사나 감사 표시를 수줍어해요. 모기만 한 목소리로 말하거나 일대일로 갑자기 말을 놓는 건 어려워하죠. 하지만! 한 번 친해지면 장벽이 마법처럼 허물어지며 빛의 속도로 벽을 허무는 폭풍 친화력을 지녔답니다."
-                           data-en="I can get shy at first, sometimes whispering 'thank you' in a tiny voice and finding it tricky to speak casually one-on-one. However, once the ice is broken, all my walls vanish as I connect with others at lightning speed!">
-                            처음엔 낯을 가려서 인사나 감사 표시를 수줍어해요. 모기만 한 목소리로 말하거나 일대일로 갑자기 말을 놓는 건 어려워하죠. 하지만! 한 번 친해지면 장벽이 마법처럼 허물어지며 빛의 속도로 벽을 허무는 폭풍 친화력을 지녔답니다.
-                        </p>
-                    </div>
+                    <span class="text-sm font-extrabold tracking-widest text-primary/80 mb-2">EXTRAVERSION</span>
+                    <h3 class="text-xl md:text-2xl font-black text-foreground px-4 leading-tight">
+                        낯을 가리지만,<br>친해지는 건 빠른 편
+                    </h3>
+                </div>
+                
+                <div class="w-full flex justify-center items-center gap-2 text-xs font-bold text-muted-foreground/80 hover:text-primary transition-colors">
+                    <span>내면 들여다보기</span>
+                    <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
                 </div>
             </div>
 
-            <!-- N: Intuition -->
-            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/10 bg-card/80 shadow-md backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/30 duration-300">
-                <div class="flex items-start space-x-4">
-                    <div class="w-14 h-14 rounded-2xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 shrink-0 flex items-center justify-center font-black text-2xl shadow-sm">
-                        N
+            <!-- E CARD BACK (rounded-3xl 추가) -->
+            <div class="card-back bg-gradient-to-br from-card to-orange-500/5 border-2 border-primary/30 p-8 flex flex-col justify-between rounded-3xl overflow-hidden">
+                <div>
+                    <div class="flex items-center gap-3 border-b border-primary/10 pb-4 mb-5">
+                        <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-500 flex items-center justify-center font-black text-base">E</span>
+                        <h4 class="text-lg font-black text-foreground">낯을 가리지만, 친해지는 건 빠른 편</h4>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="help-circle" class="h-5 w-5 text-orange-500 dark:text-orange-400 shrink-0"></i>
-                            <h3 class="text-xl font-bold" data-kr="철학 공부는 NO, 우주적 토론은 YES!" data-en="Academic Philosophy? No. Cosmic Debates? Yes!">철학 공부는 NO, 우주적 토론은 YES!</h3>
-                        </div>
-                        <p class="text-muted-foreground mt-3 text-sm md:text-base leading-relaxed" 
-                           data-kr="두껍고 딱딱한 철학 책을 공부하는 건 지루해해요. 하지만 '사후세계가 정말 존재할까?', '인간이란 존재는 과연 무엇인가?'처럼 정답 없는 심오하고 흥미진진한 질문에 대해 끝없이 상상의 나래를 펼치는 토론은 엄청나게 사랑합니다."
-                           data-en="Studying heavy, rigid philosophy books is not my thing. But sign me up for open-ended, cosmic discussions like 'Is there an afterlife?' or 'What defines the essence of human existence?'—I absolutely thrive in those imaginative debates.">
-                            두껍고 딱딱한 철학 책을 공부하는 건 지루해해요. 하지만 '사후세계가 정말 존재할까?', '인간이란 존재는 과연 무엇인가?'처럼 정답 없는 심오하고 흥미진진한 질문에 대해 끝없이 상상의 나래를 펼치는 토론은 엄청나게 사랑합니다.
-                        </p>
-                    </div>
+                    <p class="text-muted-foreground text-sm md:text-base leading-relaxed" 
+                       data-kr="처음 만난 사람에게는 먼저 말을 거는 편은 아닙니다. 인사나 감사 인사도 괜히 쑥스러워 작은 목소리로 하는 경우가 많습니다. 하지만 한번 가까워지면 금방 편해지고, 오래가는 관계를 만드는 편입니다. 다만 일대일 상황에서는 반말을 먼저 놓는 걸 아직도 조금 어려워합니다."
+                       data-en="I don't usually strike up a conversation first with someone I just met. I often greet or thank others in a quiet voice out of shyness. However, once I get close to someone, I become comfortable quickly and tend to build long-lasting relationships. That said, I still find it a bit difficult to speak casually first in one-on-one situations.">
+                        처음 만난 사람에게는 먼저 말을 거는 편은 아닙니다. 인사나 감사 인사도 괜히 쑥스러워 작은 목소리로 하는 경우가 많습니다. 하지만 한번 가까워지면 금방 편해지고, 오래가는 관계를 만드는 편입니다. 다만 일대일 상황에서는 반말을 먼저 놓는 걸 아직도 조금 어려워합니다.
+                    </p>
                 </div>
-            </div>
-
-            <!-- T: Thinking -->
-            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/10 bg-card/80 shadow-md backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/30 duration-300">
-                <div class="flex items-start space-x-4">
-                    <div class="w-14 h-14 rounded-2xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 shrink-0 flex items-center justify-center font-black text-2xl shadow-sm">
-                        T
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="heart-handshake" class="h-5 w-5 text-orange-500 dark:text-orange-400 shrink-0"></i>
-                            <h3 class="text-xl font-bold" data-kr="눈물 많은 T의 ‘맞춤형 감정 모드’" data-en="The Tearful 'T' with Custom Emotional Modes">눈물 많은 T의 ‘맞춤형 감정 모드’</h3>
-                        </div>
-                        <p class="text-muted-foreground mt-3 text-sm md:text-base leading-relaxed" 
-                           data-kr="전형적인 T 유형치고는 눈물이 무척 많아요! 슬픔, 분노, 기쁨 같은 큼직한 대표 감정들을 깊이 느끼고 눈물로 표출하죠. 세심한 배려는 조금 서툴러도 고민 상담엔 최고랍니다! F 친구들에겐 한없이 따뜻하고 세심하게, T 친구들에겐 아주 털털하고 직관적인 맞춤형 솔루션 모드를 선물합니다."
-                           data-en="For a typical 'T', I actually shed quite a few tears! I feel and express primary emotions like sadness, joy, and anger deeply. I may struggle with tiny subtle gestures, but I am excellent at listening. I have custom modes: super-warm and sweet for my 'F' friends, and candidly practical for my 'T' peers.">
-                            전형적인 T 유형치고는 눈물이 무척 많아요! 슬픔, 분노, 기쁨 같은 큼직한 대표 감정들을 깊이 느끼고 눈물로 표출하죠. 세심한 배려는 조금 서툴러도 고민 상담엔 최고랍니다! F 친구들에겐 한없이 따뜻하고 세심하게, T 친구들에겐 아주 털털하고 직관적인 맞춤형 솔루션 모드를 선물합니다.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- P: Perceiving (스타일 통일 완료) -->
-            <div class="p-6 md:p-8 rounded-[2rem] border-2 border-primary/10 bg-card/80 shadow-md backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/30 duration-300">
-                <div class="flex items-start space-x-4">
-                    <div class="w-14 h-14 rounded-2xl bg-orange-100 text-orange-500 dark:bg-orange-950/40 shrink-0 flex items-center justify-center font-black text-2xl shadow-sm">
-                        P
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="calendar-range" class="h-5 w-5 text-orange-500 dark:text-orange-400 shrink-0"></i>
-                            <h3 class="text-xl font-bold" data-kr="생존형 캘린더 '캘박' 마스터!" data-en="The Ultimate 'Calendar-Locking' Survivor!">생존형 캘린더 '캘박' 마스터!</h3>
-                        </div>
-                        <p class="text-muted-foreground mt-3 text-sm md:text-base leading-relaxed" 
-                           data-kr="시간 계산이 서툴고 덤벙대서 약속을 깜빡하기 쉬워요. 그래서 살아남기 위해 찾아낸 필살 무기가 바로 캘린더! 약속이 잡히는 즉시 그 순간에 스마트폰에 '캘박(캘린더 박제)'을 새기는 완벽한 방어 기제가 생겼답니다. 저랑 약속 잡으시면 친구들이 '캘박했지?' 하고 확인해 주는 것이 사랑스러운 국룰이에요."
-                           data-en="As a master of spontaneity, calculating time or tracking appointments is hard for me. To survive, I formed an absolute habit: 'Calendar-locking' everything the second a plan is made. Now, whenever we make plans, my friends always ask, 'Did you cal-bak it?' to keep me on track.">
-                            시간 계산이 서툴고 덤벙대서 약속을 깜빡하기 쉬워요. 그래서 살아남기 위해 찾아낸 필살 무기가 바로 캘린더! 약속이 잡히는 즉시 그 순간에 스마트폰에 '캘박(캘린더 박제)'을 새기는 완벽한 방어 기제가 생겼답니다. 저랑 약속 잡으시면 친구들이 '캘박했지?' 하고 확인해 주는 것이 사랑스러운 국룰이에요.
-                        </p>
-                    </div>
+                <div class="flex justify-end text-xs font-bold text-primary/80 gap-1.5 items-center">
+                    <span>돌아가기</span> <i data-lucide="corner-down-left" class="w-3.5 h-3.5"></i>
                 </div>
             </div>
 
         </div>
+    </div>
+
+    <!-- N: Intuition Card -->
+    <div class="card-container card-perspective" onclick="flipCard(this)">
+        <div class="card-inner rounded-3xl overflow-hidden shadow-lg transition-transform hover:-translate-y-2 hover:shadow-2xl">
+            
+            <!-- N CARD FRONT -->
+            <div class="card-front shimmer bg-card border-2 border-primary/20 p-8 flex flex-col justify-between items-center text-center relative rounded-3xl overflow-hidden">
+                <div class="absolute top-4 right-4 text-xs font-bold text-primary/40 bg-primary/5 px-2.5 py-1 rounded-full border border-primary/10">INTERACTIVE</div>
+                
+                <div class="my-auto flex flex-col items-center">
+                    <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-orange-400 to-amber-400 text-white flex items-center justify-center font-black text-5xl shadow-md mb-6 hover:scale-105 transition-transform duration-300">
+                        N
+                    </div>
+                    <span class="text-sm font-extrabold tracking-widest text-primary/80 mb-2">INTUITION</span>
+                    <h3 class="text-xl md:text-2xl font-black text-foreground px-4 leading-tight">
+                        정답보다<br>질문을 좋아합니다
+                    </h3>
+                </div>
+                
+                <div class="w-full flex justify-center items-center gap-2 text-xs font-bold text-muted-foreground/80 hover:text-primary transition-colors">
+                    <span>내면 들여다보기</span>
+                    <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
+                </div>
+            </div>
+
+            <!-- N CARD BACK -->
+            <div class="card-back bg-gradient-to-br from-card to-orange-500/5 border-2 border-primary/30 p-8 flex flex-col justify-between rounded-3xl overflow-hidden">
+                <div>
+                    <div class="flex items-center gap-3 border-b border-primary/10 pb-4 mb-5">
+                        <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-500 flex items-center justify-center font-black text-base">N</span>
+                        <h4 class="text-lg font-black text-foreground">정답보다 질문을 좋아합니다</h4>
+                    </div>
+                    <p class="text-muted-foreground text-sm md:text-base leading-relaxed" 
+                       data-kr="철학 이론을 공부하는 것보다 '사후세계는 있을까?', '인간은 어떤 존재일까?'처럼 정답이 없는 질문을 함께 이야기하는 시간을 좋아합니다. 하나의 답을 찾기보다 서로 다른 생각을 나누는 토론에서 더 큰 재미를 느낍니다."
+                       data-en="Rather than studying formal philosophical theories, I enjoy discussing open-ended questions like 'Does the afterlife exist?' or 'What kind of beings are humans?' I find greater joy in discussions where we share different perspectives rather than trying to find a single correct answer.">
+                        철학 이론을 공부하는 것보다 "사후세계는 있을까?", "인간은 어떤 존재일까?"처럼 정답이 없는 질문을 함께 이야기하는 시간을 좋아합니다. 하나의 답을 찾기보다 서로 다른 생각을 나누는 토론에서 더 큰 재미를 느낍니다.
+                    </p>
+                </div>
+                <div class="flex justify-end text-xs font-bold text-primary/80 gap-1.5 items-center">
+                    <span>돌아가기</span> <i data-lucide="corner-down-left" class="w-3.5 h-3.5"></i>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- T: Thinking Card -->
+    <div class="card-container card-perspective" onclick="flipCard(this)">
+        <div class="card-inner rounded-3xl overflow-hidden shadow-lg transition-transform hover:-translate-y-2 hover:shadow-2xl">
+            
+            <!-- T CARD FRONT -->
+            <div class="card-front shimmer bg-card border-2 border-primary/20 p-8 flex flex-col justify-between items-center text-center relative rounded-3xl overflow-hidden">
+                <div class="absolute top-4 right-4 text-xs font-bold text-primary/40 bg-primary/5 px-2.5 py-1 rounded-full border border-primary/10">INTERACTIVE</div>
+                
+                <div class="my-auto flex flex-col items-center">
+                    <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-orange-400 to-amber-400 text-white flex items-center justify-center font-black text-5xl shadow-md mb-6 hover:scale-105 transition-transform duration-300">
+                        T
+                    </div>
+                    <span class="text-sm font-extrabold tracking-widest text-primary/80 mb-2">THINKING</span>
+                    <h3 class="text-xl md:text-2xl font-black text-foreground px-4 leading-tight">
+                        공감도 결국<br>방식의 차이라고 생각합니다
+                    </h3>
+                </div>
+                
+                <div class="w-full flex justify-center items-center gap-2 text-xs font-bold text-muted-foreground/80 hover:text-primary transition-colors">
+                    <span>내면 들여다보기</span>
+                    <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
+                </div>
+            </div>
+
+            <!-- T CARD BACK -->
+            <div class="card-back bg-gradient-to-br from-card to-orange-500/5 border-2 border-primary/30 p-8 flex flex-col justify-between rounded-3xl overflow-hidden">
+                <div>
+                    <div class="flex items-center gap-3 border-b border-primary/10 pb-4 mb-5">
+                        <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-500 flex items-center justify-center font-black text-base">T</span>
+                        <h4 class="text-lg font-black text-foreground">공감도 결국 방식의 차이라고 생각합니다</h4>
+                    </div>
+                    <p class="text-muted-foreground text-sm md:text-base leading-relaxed" 
+                       data-kr="감정보다는 논리를 우선하는 편이지만, 기쁘거나 슬픈 감정에는 쉽게 공감하는 편입니다. 작은 감정을 눈치채는 데는 서툴 수 있지만, 고민 상담만큼은 상대에게 맞는 방식으로 이야기하려고 합니다. 감정을 원하는 사람에게는 공감을, 해결책을 원하는 사람에게는 현실적인 조언을해주는 편입니다."
+                       data-en="While I tend to prioritize logic over emotion, I easily empathize with feelings of joy or sadness. I might be slow to catch subtle emotional cues, but when listening to someone's worries, I try to talk in a way that suits them. I offer pure empathy to those who want emotional support, and practical advice to those looking for a solution.">
+                        감정보다는 논리를 우선하는 편이지만, 기쁘거나 슬픈 감정에는 쉽게 공감하는 편입니다. 작은 감정을 눈치채는 데는 서툴 수 있지만, 고민 상담만큼은 상대에게 맞는 방식으로 이야기하려고 합니다. 감정을 원하는 사람에게는 공감을, 해결책을 원하는 사람에게는 현실적인 조언을 해주는 편입니다.
+                    </p>
+                </div>
+                <div class="flex justify-end text-xs font-bold text-primary/80 gap-1.5 items-center">
+                    <span>돌아가기</span> <i data-lucide="corner-down-left" class="w-3.5 h-3.5"></i>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- P: Perceiving Card -->
+    <div class="card-container card-perspective" onclick="flipCard(this)">
+        <div class="card-inner rounded-3xl overflow-hidden shadow-lg transition-transform hover:-translate-y-2 hover:shadow-2xl">
+            
+            <!-- P CARD FRONT -->
+            <div class="card-front shimmer bg-card border-2 border-primary/20 p-8 flex flex-col justify-between items-center text-center relative rounded-3xl overflow-hidden">
+                <div class="absolute top-4 right-4 text-xs font-bold text-primary/40 bg-primary/5 px-2.5 py-1 rounded-full border border-primary/10">INTERACTIVE</div>
+                
+                <div class="my-auto flex flex-col items-center">
+                    <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-orange-400 to-amber-400 text-white flex items-center justify-center font-black text-5xl shadow-md mb-6 hover:scale-105 transition-transform duration-300">
+                        P
+                    </div>
+                    <span class="text-sm font-extrabold tracking-widest text-primary/80 mb-2">PERCEIVING</span>
+                    <h3 class="text-xl md:text-2xl font-black text-foreground px-4 leading-tight">
+                        계획은 약하지만<br>기록으로 보완합니다
+                    </h3>
+                </div>
+                
+                <div class="w-full flex justify-center items-center gap-2 text-xs font-bold text-muted-foreground/80 hover:text-primary transition-colors">
+                    <span>내면 들여다보기</span>
+                    <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
+                </div>
+            </div>
+
+            <!-- P CARD BACK -->
+            <div class="card-back bg-gradient-to-br from-card to-orange-500/5 border-2 border-primary/30 p-8 flex flex-col justify-between rounded-3xl overflow-hidden">
+                <div>
+                    <div class="flex items-center gap-3 border-b border-primary/10 pb-4 mb-5">
+                        <span class="w-8 h-8 rounded-lg bg-orange-100 text-orange-500 flex items-center justify-center font-black text-base">P</span>
+                        <h4 class="text-lg font-black text-foreground">계획은 약하지만 기록으로 보완합니다</h4>
+                    </div>
+                    <p class="text-muted-foreground text-sm md:text-base leading-relaxed" 
+                       data-kr="계획을 세우거나 시간을 계산하는 데는 자신이 없는 편입니다. 그래서 약속이 생기면 그 자리에서 바로 캘린더에 기록하는 습관을 만들었습니다. 덕분에 친구들도 저와 약속을 잡으면 '캘린더에 넣었지?'라고 한 번씩 확인할 정도가 되었습니다."
+                       data-en="I am not very confident in making detailed plans or calculating time. So, I developed a habit of logging appointments into my calendar right on the spot. Thanks to this, whenever my friends make plans with me, they check in by asking, 'You put it in your calendar, right?'">
+                        계획을 세우거나 시간을 계산하는 데는 자신이 없는 편입니다. 그래서 약속이 생기면 그 자리에서 바로 캘린더에 기록하는 습관을 만들었습니다. 덕분에 친구들도 저와 약속을 잡으면 "캘린더에 넣었지?"라고 한 번씩 확인할 정도가 되었습니다.
+                    </p>
+                </div>
+                <div class="flex justify-end text-xs font-bold text-primary/80 gap-1.5 items-center">
+                    <span>돌아가기</span> <i data-lucide="corner-down-left" class="w-3.5 h-3.5"></i>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
     </main>
 
-    <script src="js/common.js"></script>
+    <!-- Scripts & Interaction Realization -->
+    <script src="js/common.js" onerror="console.log('common.js not found, falling back to local scripts')"></script>
     <script>
-        // Lucide 아이콘 초기화
+        // Lucide 아이콘 일체 리로드 및 초기화
         lucide.createIcons();
+
+        // 3D 카드 뒤집기 제어 함수 (CSS 변환을 통해 쾌적하게 구현)
+        function flipCard(container) {
+            container.classList.toggle('is-flipped');
+        }
+
+        // [Dark Mode Toggle 로직] (로컬 작동 가능하도록 정교화된 폴백 제공)
+        const darkToggle = document.getElementById('dark-mode-toggle');
+        darkToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // 카드 플립 전파 방지
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            darkToggle.innerHTML = isDark 
+                ? `<i data-lucide="sun" class="h-4 w-4 text-primary"></i>` 
+                : `<i data-lucide="moon" class="h-4 w-4 text-primary"></i>`;
+            lucide.createIcons();
+        });
+
+        // [배경 캔버스 간단 폴백] 
+        // 메인 성격 분석의 신비감을 배가하는 유기적 부유 성형 파티클 시스템
+        const canvas = document.getElementById('bg-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            // 둥글고 부드러운 오렌지 및 옐로우 빛무리의 입자 구현
+            const particles = Array.from({ length: 18 }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 8 + 4,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3,
+                alpha: Math.random() * 0.25 + 0.08
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // 화면 경계 충돌 처리
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(249, 115, 22, ${p.alpha})`; // Warm orange-500 
+                    ctx.fill();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
     </script>
 </body>
 </html>
