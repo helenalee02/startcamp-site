@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐣 삐약이 프론트엔드 개발자 - 취미 상자</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))", foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))", },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))", },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))", }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --background: 48 100% 97%; --foreground: 24 50% 20%; --primary: 45 93% 55%; --primary-foreground: 24 50% 20%; 
+                --muted: 45 40% 90%; --muted-foreground: 24 20% 50%; --accent: 30 100% 85%; --accent-foreground: 24 50% 20%;
+                --border: 45 30% 85%; --input: 45 30% 85%; --ring: 45 93% 55%; --radius: 1rem;
+            }
+            .dark {
+                --background: 24 20% 12%; --foreground: 48 100% 90%; --primary: 45 93% 50%; --primary-foreground: 24 20% 12%;
+                --muted: 24 20% 20%; --muted-foreground: 48 40% 70%; --accent: 24 30% 25%; --accent-foreground: 48 100% 90%;
+                --border: 24 20% 25%; --input: 24 20% 25%; --ring: 45 93% 50%;
+            }
+            * { @apply border-border; }
+            body { 
+                @apply bg-background text-foreground antialiased; 
+            }
+        }
+        .nav-link.active { @apply text-primary font-bold relative; }
+        .nav-link.active::after { content: ''; @apply absolute -bottom-[21px] left-1/2 -translate-x-1/2 w-8 h-[3px] bg-primary rounded-t-md; }
+    </style>
+
+    <style>
+        body { 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐥</text></svg>'), auto !important;
+        }
+        a, button, [role="button"], input, select, textarea, .nav-link, .cursor-pointer {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" style="font-size: 28px;"><text y="28">🐣</text></svg>'), pointer !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden pb-16">
+
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-60"></canvas>
+
+    <!-- 공통 헤더가 주입되는 공간 -->
+    <div id="header-placeholder"></div>
+
+    <!-- 메인 취미 목록 섹션 -->
+    <main class="container mx-auto px-4 py-28 max-w-screen-md relative z-10">
+        <!-- 상단 헤더 타이틀 -->
+        <div class="mb-8 text-center md:text-left">
+            <p class="text-primary font-black text-sm tracking-widest mb-2 flex items-center justify-center md:justify-start gap-2">
+                <span class="bg-primary/20 px-2 py-0.5 rounded-md text-xs font-bold">04</span> HOBBIES
+            </p>
+            <h1 class="text-4xl font-black tracking-tight mb-3" data-kr="가은이의 다채로운 취미 상자" data-en="Gaeun's Colorful Hobby Box">
+                가은이의 다채로운 취미 상자
+            </h1>
+            <p class="text-muted-foreground text-sm md:text-base" 
+               data-kr="사소한 일상 속에서 제 마음을 반짝이게 만들어주는 소중한 조각들입니다."
+               data-en="Here are the precious pieces that make my daily life shine warmly.">
+                사소한 일상 속에서 제 마음을 반짝이게 만들어주는 소중한 조각들입니다.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-8 justify-center md:justify-start">
+            <button class="filter-btn active px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 shadow-sm" data-category="all" data-kr="전체" data-en="All">전체</button>
+            <button class="filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 shadow-sm" data-category="media" data-kr="🎮 미디어 & 게임" data-en="🎮 Media & Games">🎮 미디어 & 게임</button>
+            <button class="filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 shadow-sm" data-category="craft" data-kr="🎨 만들기 & 창작" data-en="🎨 Crafts & Creation">🎨 만들기 & 창작</button>
+            <button class="filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 shadow-sm" data-category="active" data-kr="⚡ 액티비티 & 스포츠" data-en="⚡ Activity & Sports">⚡ 액티비티 & 스포츠</button>
+        </div>
+
+        <!-- 취미 카드들이 동적으로 추가되는 곳 -->
+        <div id="hobbies-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- JS 동적 생성 영역 -->
+        </div>
+    </main>
+
+    <div id="photo-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden items-center justify-center p-4">
+        <div class="relative max-w-lg w-full bg-card rounded-3xl overflow-hidden border-2 border-primary/20 p-4 shadow-2xl flex flex-col items-center">
+            <button id="close-modal" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors p-2 rounded-full bg-background/50">
+                <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+            <img id="modal-img" src="" alt="Hobby Image" class="w-full h-auto max-h-[70vh] object-contain rounded-2xl border-2 border-border" onerror="this.src='https://placehold.co/600x400/fdbaf8/fd7238?text=Enjoying+Hobby'">
+            <p id="modal-caption" class="text-foreground/90 font-medium text-sm mt-4 text-center px-4"></p>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        const hobbies = [
+            { 
+                icon:'🍁', 
+                category: 'media',
+                title_kr:'메이플스토리', 
+                title_en:'MapleStory',
+                desc_kr:'주 게임은 메이플스토리! 사냥터를 돌며 레벨업하는 손맛을 사랑해요. 사진은 메이플 행사에서 받은 마스코트 사탕이에요.', 
+                desc_en:'My main game is MapleStory! I love the satisfaction of leveling up in hunting grounds. The photo is a mascot candy I received at a Maple event.',
+                cover:'images/maple.svg', 
+                photos:['images/maple-candy.png'] 
+            },
+            { 
+                icon:'📖', 
+                category: 'media',
+                title_kr:'웹툰 · 웹소설 감상', 
+                title_en:'Webtoons & Web Novels',
+                desc_kr:'매주 업데이트되는 웹툰과 웹소설을 챙겨보는 게 소소한 낙이에요. 보관함에 쌓인 작품만 700개가 넘어요.', 
+                desc_en:'My small happiness is reading webtoons and web novels updated weekly. I have over 700 titles saved in my library.',
+                cover:'images/webtoon.svg', 
+                photos:[] 
+            },
+            { 
+                icon:'🌀', 
+                category: 'media',
+                title_kr:'애니 감상', 
+                title_en:'Anime Watching',
+                desc_kr:'애니메이션도 빼놓을 수 없는 취미 목록이에요.', 
+                desc_en:'Watching anime is another must-have hobby on my list.',
+                cover:'images/anime.svg', 
+                photos:[] 
+            },
+            { 
+                icon:'🎬', 
+                category: 'media',
+                title_kr:'영화 감상', 
+                title_en:'Movie Night',
+                desc_kr:'장르 가리지 않고 다양한 영화를 즐겨봐요.', 
+                desc_en:'I enjoy watching all kinds of movies, regardless of genre.',
+                cover:'images/movie.svg', 
+                photos:[] 
+            },
+            { 
+                icon:'✈️', 
+                category: 'active',
+                title_kr:'여행', 
+                title_en:'Traveling',
+                desc_kr:'새로운 곳을 돌아다니며 낯선 풍경과 음식을 즐기는 걸 좋아해요.', 
+                desc_en:'I love traveling to new places, experiencing unfamiliar scenery, and trying local foods.',
+                cover:'images/travel.svg', 
+                photos:[] 
+            },
+            { 
+                icon:'🎤', 
+                category: 'active',
+                title_kr:'노래방', 
+                title_en:'Karaoke Solo',
+                desc_kr:'노래방 가서 목청껏 부르는 걸 좋아해요. 스트레스가 확 풀리는 최고의 힐링이에요.', 
+                desc_en:'I love singing my heart out at karaoke. It\'s the best healing method to blow away all my stress.',
+                cover:'images/karaoke.svg', 
+                photos:[] 
+            },
+            { 
+                icon:'🧘', 
+                category: 'active',
+                title_kr:'요가', 
+                title_en:'Yoga & Balance',
+                desc_kr:'몸과 마음의 균형을 잡아주는 시간이에요.', 
+                desc_en:'A sacred time to balance both my body and mind.',
+                cover:'images/yoga.svg', 
+                photos:[] 
+            },
+            { 
+                icon:'🏊', 
+                category: 'active',
+                title_kr:'수영', 
+                title_en:'Swimming',
+                desc_kr:'물속에서 리프레시하는 걸 좋아해요.', 
+                desc_en:'I love refreshing and resetting myself inside the cool water.',
+                cover:'images/swim.svg', 
+                photos:[] 
+            },
+            { 
+                icon:'🧶', 
+                category: 'craft',
+                title_kr:'뜨개질', 
+                title_en:'Knitting',
+                desc_kr:'한 코 한 코 뜨다 보면 스트레스가 스르륵 풀려요.', 
+                desc_en:'Knitting stitch by stitch makes all my daily stress melt away.',
+                cover:'images/knit.svg', 
+                photos:[] 
+            },
+            { 
+                icon:'💎', 
+                category: 'craft',
+                title_kr:'만들기 (레진아트 · 가죽공예)', 
+                title_en:'Crafting & Handmades',
+                desc_kr:'손으로 직접 만들어내는 걸 좋아해서 레진아트, 가죽공예, 미니어처 같은 취미들을 다양하게 즐겨요.', 
+                desc_en:'I love making things with my own hands, so I enjoy resin art, leathercraft, and miniature crafts.',
+                cover:'images/craft.svg', 
+                photos:['images/craft-resin.png','images/craft-leather.png','images/craft-miniature.png'] 
+            },
+            { 
+                icon:'🧗', 
+                category: 'active',
+                title_kr:'클라이밍', 
+                title_en:'Climbing Challenge',
+                desc_kr:'벽을 하나씩 클리어하는 재미에 푹 빠졌어요.', 
+                desc_en:'I\'m deeply into the fun of clearing and conquering climbing walls one by one.',
+                cover:'images/climbing.svg', 
+                photos:['images/climbing-1.jpg','images/climbing-2.png'] 
+            }
+        ];
+
+        function renderHobbies(filter = 'all') {
+            const grid = document.getElementById('hobbies-grid');
+            grid.innerHTML = '';
+            
+            // 현재 설정된 사이트 다국어 값 가져오기
+            const currentLang = localStorage.getItem('lang') || 'kr';
+
+            hobbies.forEach(item => {
+                if (filter !== 'all' && item.category !== filter) return;
+
+                const card = document.createElement('div');
+                card.className = "p-6 rounded-[2rem] border-2 border-primary/10 bg-card/80 text-card-foreground shadow-md backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-primary/30 duration-300 flex flex-col justify-between";
+
+                // 사진 칩스 빌더
+                let photoChipsHtml = '';
+                if (item.photos && item.photos.length > 0) {
+                    photoChipsHtml = `
+                        <div class="mt-4 pt-3 border-t border-dashed border-primary/20">
+                            <span class="text-xs text-orange-500 font-bold block mb-2" data-kr="📸 사진첩 보기 (클릭)" data-en="📸 View Photo (Click)">📸 사진첩 보기 (클릭)</span>
+                            <div class="flex gap-2 overflow-x-auto pb-1">
+                                ${item.photos.map((ph, idx) => `
+                                    <button class="photo-chip-btn bg-primary/10 hover:bg-primary/25 border border-primary/20 px-3 py-1 rounded-full text-xs font-bold text-foreground/80 transition-all flex items-center gap-1 shrink-0" data-src="${ph}" data-caption="${currentLang === 'kr' ? item.title_kr : item.title_en}">
+                                        <i data-lucide="image" class="h-3.5 w-3.5 text-orange-400"></i> ${currentLang === 'kr' ? '사진' : 'Photo'} #${idx+1}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center text-2xl shadow-sm shrink-0">
+                                ${item.icon}
+                            </div>
+                            <h3 class="text-lg font-bold" data-kr="${item.title_kr}" data-en="${item.title_en}">${currentLang === 'kr' ? item.title_kr : item.title_en}</h3>
+                        </div>
+                        <p class="text-muted-foreground text-sm leading-relaxed" data-kr="${item.desc_kr}" data-en="${item.desc_en}">
+                            ${currentLang === 'kr' ? item.desc_kr : item.desc_en}
+                        </p>
+                    </div>
+                    ${photoChipsHtml}
+                `;
+
+                grid.appendChild(card);
+            });
+
+            // 아이콘 리프레시 및 번역 적용 트리거
+            lucide.createIcons();
+            applyLanguageToHobbyPage();
+        }
+
+        function applyLanguageToHobbyPage() {
+            const currentLang = localStorage.getItem('lang') || 'kr';
+            document.querySelectorAll('[data-kr][data-en]').forEach(el => {
+                el.innerHTML = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHobbies('all');
+
+            // 1. 필터 버튼 이벤트 바인딩
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // 버튼 활성화 클래스 조절
+                    filterButtons.forEach(b => {
+                        b.classList.remove('active', 'bg-primary', 'text-primary-foreground');
+                        b.classList.add('bg-accent/50', 'text-orange-500');
+                    });
+                    btn.classList.add('active', 'bg-primary', 'text-primary-foreground');
+                    btn.classList.remove('bg-accent/50', 'text-orange-500');
+
+                    const category = btn.getAttribute('data-category');
+                    renderHobbies(category);
+                });
+            });
+
+            // 필터 기본 스타일링 처리
+            filterButtons.forEach(b => {
+                if (b.classList.contains('active')) {
+                    b.classList.add('bg-primary', 'text-primary-foreground');
+                } else {
+                    b.classList.add('bg-accent/50', 'text-orange-500');
+                }
+            });
+
+            // 2. 다국어 버튼 클릭 감지용 동기화
+            const langBtn = document.getElementById('lang-toggle');
+            if (langBtn) {
+                langBtn.addEventListener('click', () => {
+                    setTimeout(() => {
+                        const currentFilter = document.querySelector('.filter-btn.active').getAttribute('data-category');
+                        renderHobbies(currentFilter);
+                    }, 50);
+                });
+            }
+
+            // 3. 사진 라이트박스 열기 동작 위임 설정
+            const grid = document.getElementById('hobbies-grid');
+            const modal = document.getElementById('photo-modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalCaption = document.getElementById('modal-caption');
+
+            grid.addEventListener('click', (e) => {
+                const btn = e.target.closest('.photo-chip-btn');
+                if (!btn) return;
+
+                const imgSrc = btn.getAttribute('data-src');
+                const caption = btn.getAttribute('data-caption');
+
+                modalImg.src = imgSrc;
+                modalCaption.innerText = caption;
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            });
+
+            // 4. 모달 닫기 바인딩
+            document.getElementById('close-modal').addEventListener('click', () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
